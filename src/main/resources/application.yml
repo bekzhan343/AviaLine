@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: AviaLine
+
+
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/AviaLine
+    username: postgres
+    password: bekzhan230109
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+  logging:
+    level:
+      root: debug
+      org.springframework.web: debug
+      com.AviaLine: trace
+
+server:
+  port: 8234
+
+end:
+  point:
+    user-base: /users
+    user-id: /{id}
+    user-create: /create
+    user-update: /update/{email}
+    user-delete: /delete/{id}
+
+    role-base: /roles
+    role-id: /{id}
+    role-create: /create
+    role-update: /update/{id}
+    role-delete: /delete/{id}
+
+    auth-base: /auth
+    auth-login: /login
+
+keys:
+  access-key: yrQidcrJDGVZJ1wPWTSVoyMsZrwnNvTKzEw4vAchjWo=
+  refresh-key: RMBb5tiiRxwL+KMXEqfA4zykANDFSxoZeI5ofmEgx+4=
+
+jwt:
+  access:
+    expiration: 54000
+
+  refresh:
+    expiration: 2000000
