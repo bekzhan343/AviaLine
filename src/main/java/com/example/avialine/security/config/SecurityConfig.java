@@ -2,6 +2,12 @@ package com.example.avialine.security.config;
 
 import com.example.avialine.security.filter.JwtRequestFilter;
 import com.example.avialine.service.CustomUserDetailsService;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +35,9 @@ public class SecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
 
     private static final String[] DO_NOT_CHECK_URLS = {
-            "/auth/**"
+            "/auth/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**"
     };
 
     @Bean
@@ -62,5 +70,36 @@ public class SecurityConfig {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
+    }
+
+    @Bean
+    public OpenAPI customOpenApi(){
+        return new OpenAPI()
+                .info(
+                        new Info()
+                                .title("AviaLine")
+                                .description("Lets fly together")
+                                .version("1.0")
+                                .contact(
+                                        new Contact()
+                                                .email("bekzhan230109@gmail.com")
+                                                .name("Bekzhan")
+                                )
+
+                ).addSecurityItem(
+                        new SecurityRequirement()
+                                .addList("Bearer Authentication")
+
+                ).components(
+                        new Components()
+                                .addSecuritySchemes(
+                                        "Bearer Authentication",
+                                        new SecurityScheme()
+                                                .type(SecurityScheme.Type.HTTP)
+                                                .scheme("bearer")
+                                                .bearerFormat("JWT")
+                                                .description("Enter jwt token here: ")
+                                )
+                );
     }
 }

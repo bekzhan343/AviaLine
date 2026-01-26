@@ -20,7 +20,7 @@ spring:
       com.AviaLine: trace
 
 server:
-  port: 8234
+  port: 8181
 
 end:
   point:
@@ -49,3 +49,10 @@ jwt:
 
   refresh:
     expiration: 2000000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+  api-docs:
+    path: /v3/api-docs
