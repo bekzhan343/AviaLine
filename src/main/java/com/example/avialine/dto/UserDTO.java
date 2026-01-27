@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -32,7 +33,7 @@ public class UserDTO implements Serializable {
     @NotBlank(message = "phone cannot be empty!")
     private String phone;
 
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
-    private LocalDateTime lastLogin;
+    private Instant lastLogin;
 }

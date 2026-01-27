@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt(Instant.now());
 
         Role roles = roleRepo.findByName("ROLE_USER")
                         .orElseThrow(() -> new RoleNotFoundException(ApiErrorMessage.ROLE_NOT_FOUND_BY_ID_MESSAGE.getMessage("ROLE_USER")));

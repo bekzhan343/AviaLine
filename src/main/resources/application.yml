@@ -58,10 +58,9 @@ keys:
 
 jwt:
   access:
-    expiration: 54000
-
+    expiration: 900000
   refresh:
-    expiration: 2000000
+    expiration: 1296000000
 
 springdoc:
   swagger-ui:

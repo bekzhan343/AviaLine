@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Builder
@@ -22,9 +23,9 @@ public class UserProfileDTO implements Serializable {
 
     private String password;
 
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
-    private LocalDateTime lastLogin;
+    private Instant lastLogin;
 
     private String accessToken;
 

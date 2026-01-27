@@ -5,6 +5,8 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -40,10 +42,10 @@ public class User implements UserDetails {
     private boolean deleted = false;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @Column(name = "last_login")
-    private LocalDateTime lastLogin = null;
+    private Instant lastLogin = null;
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled = true;
@@ -56,6 +58,10 @@ public class User implements UserDetails {
     )
     private Set<Role> roles;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<RefreshToken> refreshTokens;
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
@@ -66,6 +72,8 @@ public class User implements UserDetails {
 
         return authorities;
     }
+
+
 
     @Override
     public String getUsername() {

@@ -17,6 +17,7 @@ public enum ApiErrorMessage {
 
     TOKEN_EXPIRED_MESSAGE("token expired!"),
     INVALID_TOKEN_MESSAGE("invalid token"),
+    TOKEN_NOT_FOUND_BY_USER_MESSAGE("token not found by id -> %s !"),
 
     PASSWORD_DO_NOT_MATCH_MESSAGE("password do not match!");
     private final String message;
