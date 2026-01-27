@@ -16,7 +16,9 @@ public enum ApiErrorMessage {
     ROLE_ALREADY_EXISTS_MESSAGE("role already exists by name -> %s !"),
 
     TOKEN_EXPIRED_MESSAGE("token expired!"),
-    INVALID_TOKEN_MESSAGE("invalid token");
+    INVALID_TOKEN_MESSAGE("invalid token"),
+
+    PASSWORD_DO_NOT_MATCH_MESSAGE("password do not match!");
     private final String message;
 
     public String getMessage(Object... args) {

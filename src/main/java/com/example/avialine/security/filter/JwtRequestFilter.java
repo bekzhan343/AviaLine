@@ -26,18 +26,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String requestURI = request.getRequestURI();
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
 
-        if (
-                requestURI.startsWith("/auth") ||
-                requestURI.startsWith("/swagger-ui") ||
-                requestURI.startsWith("/v3/api-docs")
+        boolean skip = uri.startsWith("/auth") ||
+                uri.startsWith("/swagger-ui") ||
+                uri.startsWith("/api-docs");
 
-        ){
-            return true;
-        }else {
-         return false;
-        }
+        log.info("=== JWT Filter Check === Method: {}, URI: {}, Skip: {}", method, uri, skip);
+
+        return skip;
     }
 
     @Override
@@ -46,11 +44,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             @NotNull HttpServletResponse response,
             @NotNull FilterChain filterChain
     ) throws ServletException, IOException {
-
-        if (shouldNotFilter(request)){
-            filterChain.doFilter(request, response);
-            return;
-        }
 
         String header = request.getHeader("Authorization");
 

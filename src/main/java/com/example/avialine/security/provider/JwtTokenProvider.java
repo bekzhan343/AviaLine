@@ -102,7 +102,9 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
 
-            return claims.get("roles", List.class);
+
+
+            return List.of(claims.get("roles").toString());
         }catch (ExpiredJwtException e){
             throw new TokenExpiredException(ApiErrorMessage.TOKEN_EXPIRED_MESSAGE.getMessage());
         }catch (IllegalArgumentException | JwtException e){

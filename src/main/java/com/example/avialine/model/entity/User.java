@@ -46,7 +46,7 @@ public class User implements UserDetails {
     private LocalDateTime lastLogin = null;
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled = false;
+    private boolean enabled = true;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
