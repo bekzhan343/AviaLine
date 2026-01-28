@@ -49,8 +49,8 @@ end:
     role-delete: /delete/{id}
 
     auth-base: /auth
-    auth-login: /login
-    auth-register: /register
+    auth-login: /user/login
+    auth-register: /user/register
 
 keys:
   access-key: yrQidcrJDGVZJ1wPWTSVoyMsZrwnNvTKzEw4vAchjWo=
