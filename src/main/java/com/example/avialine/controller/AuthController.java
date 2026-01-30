@@ -1,6 +1,7 @@
 package com.example.avialine.controller;
 
 import com.example.avialine.dto.UserDTO;
+import com.example.avialine.dto.request.ConfirmCodeRequest;
 import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
@@ -31,6 +32,13 @@ public class AuthController {
     @PostMapping("${end.point.auth-register}")
     public ResponseEntity<IamResponse<UserDTO>> register(@RequestBody RegisterRequest request){
         IamResponse<UserDTO> response = authService.register(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("${end.point.auth-confirm-code}")
+    public ResponseEntity<IamResponse<String>> confirmCode(@RequestBody ConfirmCodeRequest request){
+        IamResponse<String> response = authService.confirmCode(request);
+
         return ResponseEntity.ok(response);
     }
 

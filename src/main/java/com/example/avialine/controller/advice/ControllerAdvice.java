@@ -1,6 +1,7 @@
 package com.example.avialine.controller.advice;
 
 import com.example.avialine.exception.*;
+import com.example.avialine.model.entity.VerificationCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +44,11 @@ public class ControllerAdvice {
     @ExceptionHandler(RoleAlreadyExistsException.class)
     public ResponseEntity<String> handlerRoleAlreadyExistsException(RoleAlreadyExistsException e){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidOrExpiredCodeException.class)
+    public ResponseEntity<String> handlerInvalidOrExpiredCodeException(InvalidOrExpiredCodeException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
 }

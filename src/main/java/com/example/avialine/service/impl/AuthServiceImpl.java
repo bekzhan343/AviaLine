@@ -1,6 +1,7 @@
 package com.example.avialine.service.impl;
 
 import com.example.avialine.dto.UserDTO;
+import com.example.avialine.dto.request.ConfirmCodeRequest;
 import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
@@ -15,6 +16,7 @@ import com.example.avialine.repo.RoleRepo;
 import com.example.avialine.repo.UserRepo;
 import com.example.avialine.security.provider.JwtTokenProvider;
 import com.example.avialine.service.AuthService;
+import com.example.avialine.service.EmailService;
 import com.example.avialine.wrapper.IamResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
     private final DTOMapper dtoMapper;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepo refreshTokenRepo;
+    private final EmailService emailService;
 
     private final String ROLE_USER = "ROLE_USER";
 
@@ -74,6 +79,7 @@ public class AuthServiceImpl implements AuthService {
         return IamResponse.createdSuccessfully(dto);
     }
 
+    @Transactional
     @Override
     public IamResponse<UserDTO> register(@NotNull RegisterRequest registerRequest) {
 
@@ -91,7 +97,19 @@ public class AuthServiceImpl implements AuthService {
 
         UserDTO response = dtoMapper.toUserDTO(savedUser);
 
+        emailService.sendVerificationCode(user.getEmail());
+
         return IamResponse.createdSuccessfully(response);
+    }
+
+    @Override
+    public IamResponse<String> confirmCode(@NotNull ConfirmCodeRequest request) {
+
+        boolean isVerified = emailService.verifyCode(request.getEmail(), request.getCode());
+        if (isVerified){
+            return IamResponse.createdSuccessfully("Code verified");
+        }
+        return IamResponse.createdSuccessfully("Code is not verified!");
     }
 
     private User setUser(RegisterRequest request){
@@ -104,7 +122,8 @@ public class AuthServiceImpl implements AuthService {
                 .roles(getDefaultRoles())
                 .createdAt(Instant.now())
                 .lastLogin(null)
-                .enabled(true)
+                .enabled(false)
+                .emailVerified(false)
                 .build();
     }
 

@@ -2,7 +2,17 @@ spring:
   application:
     name: AviaLine
 
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: spotifyprm135@gmail.com
+    password: rgwo vqlp qqvm eyue
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   datasource:
     url: jdbc:postgresql://localhost:5432/AviaLine
@@ -51,6 +61,7 @@ end:
     auth-base: /auth
     auth-login: /user/login
     auth-register: /user/register
+    auth-confirm-code: /user/confirm-code
 
 keys:
   access-key: yrQidcrJDGVZJ1wPWTSVoyMsZrwnNvTKzEw4vAchjWo=
@@ -61,6 +72,9 @@ jwt:
     expiration: 900000
   refresh:
     expiration: 1296000000
+
+code:
+  expiration: 300000
 
 springdoc:
   swagger-ui:
