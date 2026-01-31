@@ -37,18 +37,15 @@ public class SecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
 
     private static final String[] DO_NOT_CHECK_URLS = {
-            "/auth/**",
+            "/auth/user/register",
+            "/auth/user/login",
+            "/auth/user/confirm-code",
             "/swagger-ui/**",
             "/api-docs/**",
             "/v3/api-docs/**"
     };
 
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers("/auth/**", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**");
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

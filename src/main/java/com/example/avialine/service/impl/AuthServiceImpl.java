@@ -17,19 +17,23 @@ import com.example.avialine.repo.UserRepo;
 import com.example.avialine.security.provider.JwtTokenProvider;
 import com.example.avialine.service.AuthService;
 import com.example.avialine.service.EmailService;
+import com.example.avialine.service.UserService;
 import com.example.avialine.wrapper.IamResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -49,11 +53,16 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepo refreshTokenRepo;
     private final EmailService emailService;
+    private final UserService userService;
 
     private final String ROLE_USER = "ROLE_USER";
 
+    @Transactional
     @Override
     public IamResponse<UserProfileDTO> login(@NotNull LoginRequest loginRequest) {
+
+        Instant now = Instant.now();
+
         Authentication auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
@@ -71,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
 
         String savedRefresh = saveRefreshTokenInDB(refreshStr, user);
 
-        user.setLastLogin(Instant.now());
+        user.setLastLogin(now);
         userRepo.save(user);
 
         UserProfileDTO dto = dtoMapper.toUserProfileDTO(user, accessStr, savedRefresh);
@@ -110,6 +119,35 @@ public class AuthServiceImpl implements AuthService {
             return IamResponse.createdSuccessfully("Code verified");
         }
         return IamResponse.createdSuccessfully("Code is not verified!");
+    }
+
+    @Override
+    public void deleteUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken){
+            throw new UnauthorizedException(ApiErrorMessage.UNAUTHORIZED_MESSAGE.getMessage());
+        }
+
+        String email = auth.getName();
+
+        User user = userRepo
+                .findByEmailAndDeletedFalse(email)
+                .orElseThrow(
+                        () -> new UserNotFoundException(
+                                ApiErrorMessage
+                                        .USER_NOT_FOUND_BY_EMAIL_MESSAGE.getMessage(email)
+                        )
+                        );
+
+        userService.deleteUserById(user.getId());
+
+
+        List<RefreshToken> tokens = refreshTokenRepo.findAllByUserAndRevokedFalse(user);
+        tokens.forEach(token -> token.setRevoked(true));
+
+        refreshTokenRepo.saveAll(tokens);
+
     }
 
     private User setUser(RegisterRequest request){

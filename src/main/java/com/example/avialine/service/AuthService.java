@@ -8,7 +8,6 @@ import com.example.avialine.dto.request.RegisterRequest;
 import com.example.avialine.wrapper.IamResponse;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.Map;
 
 public interface AuthService {
 
@@ -17,4 +16,6 @@ public interface AuthService {
     IamResponse<UserDTO> register(@NotNull RegisterRequest registerRequest);
 
     IamResponse<String> confirmCode(@NotNull ConfirmCodeRequest confirmCodeRequest);
+
+    void deleteUser();
 }

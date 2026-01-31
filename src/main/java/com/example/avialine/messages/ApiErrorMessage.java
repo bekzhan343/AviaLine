@@ -22,6 +22,7 @@ public enum ApiErrorMessage {
     INVALID_CODE_MESSAGE("invalid code -> %s !"),
     EXPIRED_CODE_MESSAGE("expired code -> %s !"),
 
+    UNAUTHORIZED_MESSAGE("user is not authenticated!"),
     PASSWORD_DO_NOT_MATCH_MESSAGE("password do not match!");
     private final String message;
 

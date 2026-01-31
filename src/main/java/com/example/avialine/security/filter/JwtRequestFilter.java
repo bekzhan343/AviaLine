@@ -13,7 +13,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -29,9 +28,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         String method = request.getMethod();
 
-        boolean skip = uri.startsWith("/auth") ||
+        boolean skip =
                 uri.startsWith("/swagger-ui") ||
-                uri.startsWith("/api-docs");
+                uri.startsWith("/api-docs") ||
+                uri.matches("/auth/user/register") ||
+                uri.matches("/auth/user/login") ||
+                uri.matches("/auth/user/confirm-code");
 
         log.info("=== JWT Filter Check === Method: {}, URI: {}, Skip: {}", method, uri, skip);
 

@@ -42,7 +42,7 @@ spring:
       com.AviaLine: trace
 
 server:
-  port: 8100
+  port: 8102
 
 end:
   point:
@@ -62,6 +62,7 @@ end:
     auth-login: /user/login
     auth-register: /user/register
     auth-confirm-code: /user/confirm-code
+    auth-delete-user: /user/delete
 
 keys:
   access-key: yrQidcrJDGVZJ1wPWTSVoyMsZrwnNvTKzEw4vAchjWo=
