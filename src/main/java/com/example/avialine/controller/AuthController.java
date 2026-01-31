@@ -2,9 +2,11 @@ package com.example.avialine.controller;
 
 import com.example.avialine.dto.UserDTO;
 import com.example.avialine.dto.request.ConfirmCodeRequest;
+import com.example.avialine.dto.request.ConfirmEmailRequest;
 import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
+import com.example.avialine.dto.response.ConfirmEmailResponse;
 import com.example.avialine.dto.response.PersonInfoResponse;
 import com.example.avialine.service.AuthService;
 import com.example.avialine.wrapper.IamResponse;
@@ -12,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @Slf4j
 @AllArgsConstructor
@@ -35,7 +38,7 @@ public class AuthController {
 
     @PostMapping("${end.point.auth-confirm-code}")
     public ResponseEntity<IamResponse<String>> confirmCode(@RequestBody ConfirmCodeRequest request){
-        IamResponse<String> response = authService.confirmCode(request);
+        IamResponse<String> response = authService.confirmVerificationCode(request);
 
         return ResponseEntity.ok(response);
     }
@@ -53,4 +56,12 @@ public class AuthController {
 
         return ResponseEntity.ok(personalInfo);
     }
+
+    @PostMapping("${end.point.auth-forgot-password}")
+    public ResponseEntity<IamResponse<ConfirmEmailResponse>> sendVerificationCode(@RequestBody ConfirmEmailRequest request){
+        IamResponse<ConfirmEmailResponse> response = authService.sendEmailVerificationCode(request);
+
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -39,6 +39,7 @@ public class SecurityConfig {
     private static final String[] DO_NOT_CHECK_URLS = {
             "/auth/user/register",
             "/auth/user/login",
+            "/auth/user/forgot-password",
             "/auth/user/confirm-code",
             "/swagger-ui/**",
             "/api-docs/**",

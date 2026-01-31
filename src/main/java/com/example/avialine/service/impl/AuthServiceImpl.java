@@ -2,13 +2,16 @@ package com.example.avialine.service.impl;
 
 import com.example.avialine.dto.UserDTO;
 import com.example.avialine.dto.request.ConfirmCodeRequest;
+import com.example.avialine.dto.request.ConfirmEmailRequest;
 import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
+import com.example.avialine.dto.response.ConfirmEmailResponse;
 import com.example.avialine.dto.response.PersonInfoResponse;
 import com.example.avialine.exception.*;
 import com.example.avialine.mapper.DTOMapper;
 import com.example.avialine.messages.ApiErrorMessage;
+import com.example.avialine.messages.ApiMessage;
 import com.example.avialine.model.entity.RefreshToken;
 import com.example.avialine.model.entity.Role;
 import com.example.avialine.model.entity.User;
@@ -24,11 +27,9 @@ import com.example.avialine.wrapper.IamResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public IamResponse<String> confirmCode(@NotNull ConfirmCodeRequest request) {
+    public IamResponse<String> confirmVerificationCode(@NotNull ConfirmCodeRequest request) {
 
         boolean isVerified = emailService.verifyCode(request.getEmail(), request.getCode());
         if (isVerified){
@@ -153,6 +154,22 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         return IamResponse.createdSuccessfully(userInfo);
+    }
+
+    @Override
+    public IamResponse<ConfirmEmailResponse> sendEmailVerificationCode(@NotNull ConfirmEmailRequest request) {
+
+        User user = getUserFromRepo(request.getEmail());
+
+        emailService.sendVerificationCode(user.getEmail());
+
+
+        return IamResponse.createdSuccessfully(
+                new ConfirmEmailResponse(
+                user.getEmail(),
+                ApiMessage.VERIFICATION_CODE_SENT_MESSAGE.getMessage(user.getEmail())
+                )
+        );
     }
 
     private User setUser(RegisterRequest request){
