@@ -14,4 +14,6 @@ public interface UserService {
     IamResponse<UserDTO> updateUserByEmail(@NotNull String email, @NotNull UserDTO dto);
 
     void deleteUserById(@NotNull Integer id);
+
+
 }

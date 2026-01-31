@@ -5,6 +5,7 @@ import com.example.avialine.dto.request.ConfirmCodeRequest;
 import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
+import com.example.avialine.dto.response.PersonInfoResponse;
 import com.example.avialine.service.AuthService;
 import com.example.avialine.wrapper.IamResponse;
 import lombok.AllArgsConstructor;
@@ -46,4 +47,10 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("${end.point.auth-personal-info}")
+    public ResponseEntity<IamResponse<PersonInfoResponse>> getPersonalInfo(){
+        IamResponse<PersonInfoResponse> personalInfo = authService.getPersonalInfo();
+
+        return ResponseEntity.ok(personalInfo);
+    }
 }

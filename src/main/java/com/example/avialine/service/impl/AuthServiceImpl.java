@@ -5,6 +5,7 @@ import com.example.avialine.dto.request.ConfirmCodeRequest;
 import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
+import com.example.avialine.dto.response.PersonInfoResponse;
 import com.example.avialine.exception.*;
 import com.example.avialine.mapper.DTOMapper;
 import com.example.avialine.messages.ApiErrorMessage;
@@ -15,6 +16,7 @@ import com.example.avialine.repo.RefreshTokenRepo;
 import com.example.avialine.repo.RoleRepo;
 import com.example.avialine.repo.UserRepo;
 import com.example.avialine.security.provider.JwtTokenProvider;
+import com.example.avialine.security.util.SecurityUtil;
 import com.example.avialine.service.AuthService;
 import com.example.avialine.service.EmailService;
 import com.example.avialine.service.UserService;
@@ -73,10 +75,7 @@ public class AuthServiceImpl implements AuthService {
         String accessStr = tokenProvider.generateAccessToken(auth);
         String refreshStr = tokenProvider.generateRefreshToken(auth);
 
-        User user = userRepo.findByEmailAndDeletedFalse(loginRequest.getEmail())
-                .orElseThrow(
-                        () -> new UserNotFoundException(ApiErrorMessage
-                                .USER_NOT_FOUND_BY_EMAIL_MESSAGE.getMessage(loginRequest.getEmail())));
+        User user = getUserFromRepo(loginRequest.getEmail());
 
         String savedRefresh = saveRefreshTokenInDB(refreshStr, user);
 
@@ -123,22 +122,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void deleteUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken){
-            throw new UnauthorizedException(ApiErrorMessage.UNAUTHORIZED_MESSAGE.getMessage());
-        }
+        Authentication auth = SecurityUtil.requireAuthentication();
 
         String email = auth.getName();
 
-        User user = userRepo
-                .findByEmailAndDeletedFalse(email)
-                .orElseThrow(
-                        () -> new UserNotFoundException(
-                                ApiErrorMessage
-                                        .USER_NOT_FOUND_BY_EMAIL_MESSAGE.getMessage(email)
-                        )
-                        );
+        User user = getUserFromRepo(email);
 
         userService.deleteUserById(user.getId());
 
@@ -148,6 +136,23 @@ public class AuthServiceImpl implements AuthService {
 
         refreshTokenRepo.saveAll(tokens);
 
+    }
+
+    @Override
+    public IamResponse<PersonInfoResponse> getPersonalInfo() {
+        Authentication auth = SecurityUtil.requireAuthentication();
+
+        String email = auth.getName();
+
+        User user = getUserFromRepo(email);
+
+        PersonInfoResponse userInfo = PersonInfoResponse.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .build();
+
+        return IamResponse.createdSuccessfully(userInfo);
     }
 
     private User setUser(RegisterRequest request){
@@ -196,5 +201,15 @@ public class AuthServiceImpl implements AuthService {
 
         RefreshToken savedToken = refreshTokenRepo.save(token);
         return savedToken.getToken();
+    }
+
+    private User getUserFromRepo(String email){
+        return userRepo.findByEmailAndDeletedFalse(email)
+                .orElseThrow(
+                        () -> new UserNotFoundException(
+                                ApiErrorMessage
+                                        .USER_NOT_FOUND_BY_EMAIL_MESSAGE
+                                        .getMessage(email))
+                );
     }
 }

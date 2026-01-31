@@ -63,6 +63,7 @@ end:
     auth-register: /user/register
     auth-confirm-code: /user/confirm-code
     auth-delete-user: /user/delete
+    auth-personal-info: /user/personal-info
 
 keys:
   access-key: yrQidcrJDGVZJ1wPWTSVoyMsZrwnNvTKzEw4vAchjWo=
