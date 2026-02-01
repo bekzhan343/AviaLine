@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ApiMessage {
 
-    VERIFICATION_CODE_SENT_MESSAGE("verification code sent to your email -> %s");
+    VERIFICATION_CODE_SENT_MESSAGE("verification code sent to your email!");
 
     private final String message;
 

@@ -7,23 +7,23 @@ import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
 import com.example.avialine.dto.response.ConfirmEmailResponse;
+import com.example.avialine.dto.response.DefaultResponse;
 import com.example.avialine.dto.response.PersonInfoResponse;
-import com.example.avialine.wrapper.IamResponse;
 import jakarta.validation.constraints.NotNull;
 
 
 public interface AuthService {
 
-    IamResponse<UserProfileDTO> login(@NotNull LoginRequest loginRequest);
+    UserProfileDTO login(@NotNull LoginRequest loginRequest);
 
-    IamResponse<UserDTO> register(@NotNull RegisterRequest registerRequest);
+    DefaultResponse register(@NotNull RegisterRequest registerRequest);
 
-    IamResponse<String> confirmVerificationCode(@NotNull ConfirmCodeRequest confirmCodeRequest);
+    String confirmVerificationCode(@NotNull ConfirmCodeRequest confirmCodeRequest);
 
     void deleteUser();
 
-    IamResponse<PersonInfoResponse> getPersonalInfo();
+    PersonInfoResponse getPersonalInfo();
 
-    IamResponse<ConfirmEmailResponse> sendEmailVerificationCode(@NotNull ConfirmEmailRequest request);
+    ConfirmEmailResponse sendEmailVerificationCode(@NotNull ConfirmEmailRequest request);
 
 }

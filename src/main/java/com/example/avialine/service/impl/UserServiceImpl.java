@@ -12,14 +12,11 @@ import com.example.avialine.model.entity.User;
 import com.example.avialine.repo.RoleRepo;
 import com.example.avialine.repo.UserRepo;
 import com.example.avialine.service.UserService;
-import com.example.avialine.wrapper.IamResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,18 +31,18 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public IamResponse<UserDTO> getUserById(@NotNull Integer id) throws UserNotFoundException {
+    public UserDTO getUserById(@NotNull Integer id) throws UserNotFoundException {
 
         User user = userRepo.findById(id)
                 .orElseThrow(() ->  new UserNotFoundException(ApiErrorMessage.USER_NOT_FOUND_MESSAGE.getMessage(id)));
 
-        UserDTO response = dtoMapper.toUserDTO(user);
 
-        return IamResponse.createdSuccessfully(response);
+
+        return dtoMapper.toUserDTO(user);
     }
 
     @Override
-    public IamResponse<UserDTO> createUser(@NotNull UserDTO userDTO) {
+    public UserDTO createUser(@NotNull UserDTO userDTO) {
         if (userRepo.existsByName(userDTO.getUsername()) || userRepo.existsByEmail(userDTO.getEmail())){
             throw new UserAlreadyExistsException(ApiErrorMessage.USER_ALREADY_EXISTS_MESSAGE.getMessage(userDTO.getEmail()));
         }
@@ -65,13 +62,11 @@ public class UserServiceImpl implements UserService {
 
         User saved = userRepo.save(user);
 
-        UserDTO response = dtoMapper.toUserDTO(saved);
-
-        return IamResponse.createdSuccessfully(response);
+        return dtoMapper.toUserDTO(saved);
     }
 
     @Override
-    public IamResponse<UserDTO> updateUserByEmail(@NotNull String email,@NotNull UserDTO dto) {
+    public UserDTO updateUserByEmail(@NotNull String email,@NotNull UserDTO dto) {
         User findUser = userRepo.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(ApiErrorMessage.USER_NOT_FOUND_BY_EMAIL_MESSAGE.getMessage(email)));
 
@@ -82,9 +77,7 @@ public class UserServiceImpl implements UserService {
 
         User updated = userRepo.save(findUser);
 
-        UserDTO response = dtoMapper.toUserDTO(updated);
-
-        return IamResponse.createdSuccessfully(response);
+        return dtoMapper.toUserDTO(updated);
     }
 
     @Override

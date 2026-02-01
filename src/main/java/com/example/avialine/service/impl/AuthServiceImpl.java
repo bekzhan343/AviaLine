@@ -7,6 +7,7 @@ import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
 import com.example.avialine.dto.response.ConfirmEmailResponse;
+import com.example.avialine.dto.response.DefaultResponse;
 import com.example.avialine.dto.response.PersonInfoResponse;
 import com.example.avialine.exception.*;
 import com.example.avialine.mapper.DTOMapper;
@@ -23,9 +24,9 @@ import com.example.avialine.security.util.SecurityUtil;
 import com.example.avialine.service.AuthService;
 import com.example.avialine.service.EmailService;
 import com.example.avialine.service.UserService;
-import com.example.avialine.wrapper.IamResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.reflect.InternalUseOnlyPointcutParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,9 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @RequiredArgsConstructor
@@ -62,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public IamResponse<UserProfileDTO> login(@NotNull LoginRequest loginRequest) {
+    public UserProfileDTO login(@NotNull LoginRequest loginRequest) {
 
         Instant now = Instant.now();
 
@@ -83,42 +82,51 @@ public class AuthServiceImpl implements AuthService {
         user.setLastLogin(now);
         userRepo.save(user);
 
-        UserProfileDTO dto = dtoMapper.toUserProfileDTO(user, accessStr, savedRefresh);
 
-        return IamResponse.createdSuccessfully(dto);
+        return  dtoMapper.toUserProfileDTO(user, accessStr, savedRefresh);
     }
 
     @Transactional
     @Override
-    public IamResponse<UserDTO> register(@NotNull RegisterRequest registerRequest) {
+    public DefaultResponse register(@NotNull RegisterRequest registerRequest) {
 
+        Map<String, List<String>> errors = new HashMap<>();
         String email = registerRequest.getEmail();
 
 
-        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())){
-            throw new PasswordDoNotMatchException(ApiErrorMessage.PASSWORD_DO_NOT_MATCH_MESSAGE.getMessage());
-        } else if (userRepo.existsByEmailAndDeletedFalse(email)) {
-            throw new UserAlreadyExistsException(ApiErrorMessage.USER_ALREADY_EXISTS_MESSAGE.getMessage(email));
+        if (userRepo.existsByEmailAndDeletedFalse(email)) {
+            errors.put("email", List.of(ApiErrorMessage.USER_ALREADY_EXISTS_MESSAGE.getMessage(email)));
         }
+        if (userRepo.existsByPhoneAndDeletedFalse(registerRequest.getPhone())){
+            errors.put("phone", List.of(ApiErrorMessage.PHONE_NUMBER_IS_UNAVAILABLE_MESSAGE.getMessage()));
+        }
+        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())){
+            errors.put("password", List.of(ApiErrorMessage.PASSWORD_DO_NOT_MATCH_MESSAGE.getMessage()));
+        }
+        if (!errors.isEmpty()){
+            throw new ValidationException(
+                    "error:",
+                    errors
+            );
+        }
+
         User user = setUser(registerRequest);
 
-        User savedUser = userRepo.save(user);
-
-        UserDTO response = dtoMapper.toUserDTO(savedUser);
+        userRepo.save(user);
 
         emailService.sendVerificationCode(user.getEmail());
 
-        return IamResponse.createdSuccessfully(response);
+        return new DefaultResponse(true, ApiMessage.VERIFICATION_CODE_SENT_MESSAGE.getMessage());
     }
 
     @Override
-    public IamResponse<String> confirmVerificationCode(@NotNull ConfirmCodeRequest request) {
+    public String confirmVerificationCode(@NotNull ConfirmCodeRequest request) {
 
         boolean isVerified = emailService.verifyCode(request.getEmail(), request.getCode());
         if (isVerified){
-            return IamResponse.createdSuccessfully("Code verified");
+            return "Code verified";
         }
-        return IamResponse.createdSuccessfully("Code is not verified!");
+        return "Code is not verified!";
     }
 
     @Override
@@ -140,42 +148,38 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public IamResponse<PersonInfoResponse> getPersonalInfo() {
+    public PersonInfoResponse getPersonalInfo() {
         Authentication auth = SecurityUtil.requireAuthentication();
 
         String email = auth.getName();
 
         User user = getUserFromRepo(email);
 
-        PersonInfoResponse userInfo = PersonInfoResponse.builder()
+        return PersonInfoResponse.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .build();
-
-        return IamResponse.createdSuccessfully(userInfo);
     }
 
     @Override
-    public IamResponse<ConfirmEmailResponse> sendEmailVerificationCode(@NotNull ConfirmEmailRequest request) {
+    public ConfirmEmailResponse sendEmailVerificationCode(@NotNull ConfirmEmailRequest request) {
 
         User user = getUserFromRepo(request.getEmail());
 
         emailService.sendVerificationCode(user.getEmail());
 
 
-        return IamResponse.createdSuccessfully(
-                new ConfirmEmailResponse(
+        return new ConfirmEmailResponse(
                 user.getEmail(),
                 ApiMessage.VERIFICATION_CODE_SENT_MESSAGE.getMessage(user.getEmail())
-                )
         );
     }
 
     private User setUser(RegisterRequest request){
         return User
                 .builder()
-                .name(request.getUsername())
+                .name(request.getFirstName())
                 .email(request.getEmail())
                 .phone(request.getPhone())
                 .password(passwordEncoder.encode(request.getPassword()))

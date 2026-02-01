@@ -9,7 +9,6 @@ import com.example.avialine.messages.ApiErrorMessage;
 import com.example.avialine.model.entity.Role;
 import com.example.avialine.repo.RoleRepo;
 import com.example.avialine.service.RoleService;
-import com.example.avialine.wrapper.IamResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,17 +23,15 @@ public class RoleServiceImpl implements RoleService {
     private final EntityMapper entityMapper;
 
     @Override
-    public IamResponse<RoleDTO> getRoleById(@NotNull Integer id) {
+    public RoleDTO getRoleById(@NotNull Integer id) {
         Role role = roleRepo.findById(id)
                 .orElseThrow(() -> new RoleNotFoundException(ApiErrorMessage.ROLE_NOT_FOUND_BY_ID_MESSAGE.getMessage(id)));
 
-        RoleDTO response = dtoMapper.toRoleDTO(role);
-
-        return IamResponse.createdSuccessfully(response);
+        return  dtoMapper.toRoleDTO(role);
     }
 
     @Override
-    public IamResponse<RoleDTO> createRole(@NotNull RoleDTO roleDTO) {
+    public RoleDTO createRole(@NotNull RoleDTO roleDTO) {
 
         if (roleRepo.existsByName(roleDTO.getName())){
             throw new RoleAlreadyExistsException(ApiErrorMessage.ROLE_ALREADY_EXISTS_MESSAGE.getMessage(roleDTO.getName()));
@@ -44,13 +41,11 @@ public class RoleServiceImpl implements RoleService {
 
         Role savedRole = roleRepo.save(role);
 
-        RoleDTO response = dtoMapper.toRoleDTO(savedRole);
-
-        return IamResponse.createdSuccessfully(response);
+        return dtoMapper.toRoleDTO(savedRole);
     }
 
     @Override
-    public IamResponse<RoleDTO> updateRoleById(@NotNull Integer id,@NotNull RoleDTO roleDTO) {
+    public RoleDTO updateRoleById(@NotNull Integer id,@NotNull RoleDTO roleDTO) {
 
         Role role = roleRepo.findById(id)
                 .orElseThrow(() -> new RoleNotFoundException(ApiErrorMessage.ROLE_NOT_FOUND_BY_ID_MESSAGE.getMessage(roleDTO.getId())));
@@ -59,8 +54,7 @@ public class RoleServiceImpl implements RoleService {
 
         Role updatedRole = roleRepo.save(role);
 
-        RoleDTO response = dtoMapper.toRoleDTO(updatedRole);
-        return IamResponse.createdSuccessfully(response);
+        return dtoMapper.toRoleDTO(updatedRole);
     }
 
     @Override
