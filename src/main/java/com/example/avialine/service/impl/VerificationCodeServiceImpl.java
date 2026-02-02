@@ -1,8 +1,9 @@
 package com.example.avialine.service.impl;
 
 
-import com.example.avialine.exception.InvalidOrExpiredCodeException;
-import com.example.avialine.exception.UserNotFoundException;
+import com.example.avialine.exception.CodeAlreadyVerifiedException;
+import com.example.avialine.exception.InvalidCredentialsException;
+import com.example.avialine.exception.InvalidVerificationCodeException;
 import com.example.avialine.messages.ApiErrorMessage;
 import com.example.avialine.model.entity.User;
 import com.example.avialine.model.entity.VerificationCode;
@@ -30,6 +31,7 @@ public class VerificationCodeServiceImpl  implements VerificationCodeService {
 
 
 
+    @Transactional
     @Override
     public VerificationCode createVerificationCode(String userEmail) {
 
@@ -60,13 +62,19 @@ public class VerificationCodeServiceImpl  implements VerificationCodeService {
 
         VerificationCode vCode = getVerificationCode(userEmail, code);
 
+
+        if (vCode.isVerified()){
+            throw new CodeAlreadyVerifiedException(ApiErrorMessage.CODE_ALREADY_VERIFIED_MESSAGE.getMessage());
+        }
+
         if (vCode.getExpiresAt().isBefore(Instant.now())){
-            throw new InvalidOrExpiredCodeException(
+            throw new InvalidVerificationCodeException(
                     ApiErrorMessage
                             .EXPIRED_CODE_MESSAGE
                             .getMessage(vCode.getCode())
             );
         }
+
 
         vCode.setVerified(true);
         vCode.setVerifiedAt(Instant.now());
@@ -75,6 +83,7 @@ public class VerificationCodeServiceImpl  implements VerificationCodeService {
         User user = getUser(userEmail);
         user.setEmailVerified(true);
         user.setEnabled(true);
+        user.setLastLogin(Instant.now());
 
         userRepo.save(user);
 
@@ -91,10 +100,10 @@ public class VerificationCodeServiceImpl  implements VerificationCodeService {
     private User getUser(String email){
         return userRepo.findByEmailAndDeletedFalse(email)
                 .orElseThrow(
-                        () -> new UserNotFoundException(
+                        () -> new InvalidCredentialsException(
                                 ApiErrorMessage
-                                        .USER_NOT_FOUND_BY_EMAIL_MESSAGE
-                                        .getMessage(email))
+                                        .INVALID_CODE_MESSAGE.getMessage())
+
                 );
     }
 
@@ -103,7 +112,7 @@ public class VerificationCodeServiceImpl  implements VerificationCodeService {
         return verificationCodeRepo
                 .findByUserEmailAndCodeAndVerifiedFalse(userEmail, code)
                 .orElseThrow(
-                        () -> new InvalidOrExpiredCodeException(
+                        () -> new InvalidVerificationCodeException(
                                 ApiErrorMessage
                                         .INVALID_CODE_MESSAGE
                                         .getMessage(code)));

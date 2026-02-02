@@ -1,5 +1,6 @@
 package com.example.avialine.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,9 +15,12 @@ import java.util.Map;
 @NoArgsConstructor
 public class GlobalErrorResponse {
 
+    @JsonProperty("response")
     private boolean response = false;
 
+    @JsonProperty("message")
     private String message;
 
-    private Map<String, List<String>> errors;
+    @JsonProperty("error")
+    private Map<String, List<String>> error;
 }

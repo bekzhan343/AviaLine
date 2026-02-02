@@ -1,6 +1,5 @@
 package com.example.avialine.dto.response;
 
-import jakarta.validation.constraints.Email;
 import lombok.*;
 
 import java.io.Serializable;
@@ -11,9 +10,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ConfirmEmailResponse implements Serializable {
+public class ConfirmCodeResponse implements Serializable {
 
-    private String email;
+    private boolean response = true;
 
     private String message;
+
+    private String token;
 }

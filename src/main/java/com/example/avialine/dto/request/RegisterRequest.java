@@ -16,6 +16,7 @@ import lombok.*;
 public class RegisterRequest {
 
     @Schema(
+            example = "user@gmail.com",
             description = "Email",
             title = "Эл-почта (логин)",
             maxLength = 254,

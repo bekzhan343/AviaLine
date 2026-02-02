@@ -42,7 +42,7 @@ spring:
       com.AviaLine: trace
 
 server:
-  port: 8103
+  port: 8111
 
 end:
   point:

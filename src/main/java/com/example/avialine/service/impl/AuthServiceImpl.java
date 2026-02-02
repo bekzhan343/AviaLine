@@ -1,12 +1,11 @@
 package com.example.avialine.service.impl;
 
-import com.example.avialine.dto.UserDTO;
 import com.example.avialine.dto.request.ConfirmCodeRequest;
 import com.example.avialine.dto.request.ConfirmEmailRequest;
 import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
-import com.example.avialine.dto.response.ConfirmEmailResponse;
+import com.example.avialine.dto.response.ConfirmCodeResponse;
 import com.example.avialine.dto.response.DefaultResponse;
 import com.example.avialine.dto.response.PersonInfoResponse;
 import com.example.avialine.exception.*;
@@ -26,13 +25,15 @@ import com.example.avialine.service.EmailService;
 import com.example.avialine.service.UserService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.reflect.InternalUseOnlyPointcutParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -63,27 +64,35 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserProfileDTO login(@NotNull LoginRequest loginRequest) {
 
-        Instant now = Instant.now();
+        try {
 
-        Authentication auth = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
-                )
-        );
+            Instant now = Instant.now();
 
-        String accessStr = tokenProvider.generateAccessToken(auth);
-        String refreshStr = tokenProvider.generateRefreshToken(auth);
+            Authentication auth = authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getPhone(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-        User user = getUserFromRepo(loginRequest.getEmail());
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
-        String savedRefresh = saveRefreshTokenInDB(refreshStr, user);
+            String accessStr = tokenProvider.generateAccessToken(auth);
+            String refreshStr = tokenProvider.generateRefreshToken(auth);
 
-        user.setLastLogin(now);
-        userRepo.save(user);
+            User user = userService.getActiveUserByPhone(loginRequest.getPhone());
+
+            saveRefreshTokenInDB(refreshStr, user);
+
+            user.setLastLogin(now);
+            userRepo.save(user);
 
 
-        return  dtoMapper.toUserProfileDTO(user, accessStr, savedRefresh);
+            return  dtoMapper.toUserProfileDTO(user, accessStr);
+
+        }catch (BadCredentialsException  | UserNotFoundException e){
+            throw new InvalidCredentialsException(ApiErrorMessage.INVALID_PASSWORD_OR_PHONE_MESSAGE.getMessage());
+        }
     }
 
     @Transactional
@@ -103,11 +112,9 @@ public class AuthServiceImpl implements AuthService {
         if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())){
             errors.put("password", List.of(ApiErrorMessage.PASSWORD_DO_NOT_MATCH_MESSAGE.getMessage()));
         }
+
         if (!errors.isEmpty()){
-            throw new ValidationException(
-                    "error:",
-                    errors
-            );
+            throw new  ValidationException("error: ", errors);
         }
 
         User user = setUser(registerRequest);
@@ -120,13 +127,33 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String confirmVerificationCode(@NotNull ConfirmCodeRequest request) {
+    public ConfirmCodeResponse confirmVerificationCode(@NotNull ConfirmCodeRequest request) {
 
-        boolean isVerified = emailService.verifyCode(request.getEmail(), request.getCode());
-        if (isVerified){
-            return "Code verified";
-        }
-        return "Code is not verified!";
+            boolean isVerified = emailService.verifyCode(request.getEmail(), request.getCode());
+            User user = userService.getActiveUserByEmail(request.getEmail());
+            if (!isVerified) {
+                throw new InvalidVerificationCodeException(ApiErrorMessage.INVALID_CODE_MESSAGE.getMessage());
+            }
+
+            Authentication auth = new UsernamePasswordAuthenticationToken(
+                    user.getPhone(),
+                    null,
+                    user.getAuthorities()
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+            String accessToken = tokenProvider.generateAccessToken(auth);
+            String refreshToken = tokenProvider.generateRefreshToken(auth);
+
+            saveRefreshTokenInDB(refreshToken, user);
+
+            return new ConfirmCodeResponse(
+                    true,
+                    ApiMessage.CODE_CONFIRMED_MESSAGE.getMessage(),
+                    accessToken
+            );
+
     }
 
     @Override
@@ -135,10 +162,9 @@ public class AuthServiceImpl implements AuthService {
 
         String email = auth.getName();
 
-        User user = getUserFromRepo(email);
+        User user = userService.getActiveUserByEmail(email);
 
-        userService.deleteUserById(user.getId());
-
+        userService.deleteUserByEmail(email);
 
         List<RefreshToken> tokens = refreshTokenRepo.findAllByUserAndRevokedFalse(user);
         tokens.forEach(token -> token.setRevoked(true));
@@ -163,17 +189,19 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ConfirmEmailResponse sendEmailVerificationCode(@NotNull ConfirmEmailRequest request) {
+    public DefaultResponse sendEmailVerificationCode(@NotNull ConfirmEmailRequest request) throws TransactionException {
 
-        User user = getUserFromRepo(request.getEmail());
+        User user = userService.getActiveUserByEmail(request.getEmail());
 
         emailService.sendVerificationCode(user.getEmail());
 
 
-        return new ConfirmEmailResponse(
-                user.getEmail(),
+        return new DefaultResponse(
+                true,
                 ApiMessage.VERIFICATION_CODE_SENT_MESSAGE.getMessage(user.getEmail())
         );
+
+
     }
 
     private User setUser(RegisterRequest request){
@@ -230,7 +258,6 @@ public class AuthServiceImpl implements AuthService {
                         () -> new UserNotFoundException(
                                 ApiErrorMessage
                                         .USER_NOT_FOUND_BY_EMAIL_MESSAGE
-                                        .getMessage(email))
-                );
+                                        .getMessage(email)));
     }
 }

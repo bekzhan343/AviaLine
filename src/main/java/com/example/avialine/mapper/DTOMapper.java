@@ -29,17 +29,12 @@ public class DTOMapper {
                 .build();
     }
 
-    public UserProfileDTO toUserProfileDTO(User user,String accessToken,String refreshToken){
+    public UserProfileDTO toUserProfileDTO(User user,String accessToken){
         return UserProfileDTO
                 .builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .createdAt(user.getCreatedAt())
-                .lastLogin(user.getLastLogin())
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .userId(user.getId())
+                .token(accessToken)
+                .phone(user.getPhone())
                 .build();
     }
 }

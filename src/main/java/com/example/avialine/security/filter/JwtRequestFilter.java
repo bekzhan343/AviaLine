@@ -63,7 +63,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String username = jwtTokenProvider.getUsernameFromAccessToken(token);
+            String phone = jwtTokenProvider.getUsernameFromAccessToken(token);
 
             List<SimpleGrantedAuthority> roles = jwtTokenProvider
                     .getRolesFromAccessToken(token)
@@ -72,14 +72,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     .toList();
 
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                    username,
+                    phone,
                     null,
                     roles
             );
 
             SecurityContextHolder.getContext().setAuthentication(auth);
 
-            log.info("User {} authenticated with roles {}", username, roles);
+            log.info("User {} authenticated with roles {}", phone, roles);
         } catch (Exception e){
             log.error("Authentication failed: {}", e.getMessage());
         }

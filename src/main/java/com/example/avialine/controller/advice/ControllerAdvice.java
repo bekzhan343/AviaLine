@@ -1,27 +1,46 @@
 package com.example.avialine.controller.advice;
 
+import com.example.avialine.dto.response.DefaultResponse;
+import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.GlobalErrorResponse;
 import com.example.avialine.exception.*;
-import com.example.avialine.model.entity.VerificationCode;
+import com.example.avialine.messages.ApiErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestControllerAdvice
 public class ControllerAdvice {
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handlerUserNotFoundException(UserNotFoundException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    public ResponseEntity<GlobalErrorResponse> handlerUserNotFoundException(UserNotFoundException e){
+
+        Map<String, List<String>> error = new HashMap<>();
+        error.put("email", List.of(e.getMessage()));
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new GlobalErrorResponse(
+                        false,
+                        ApiErrorMessage.ERROR_PROCESSING_REQUEST_MESSAGE.getMessage(),
+                        error
+
+                )
+        );
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<DetailErrorResponse> handlerInvalidCredentialsException(InvalidCredentialsException e){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                new DetailErrorResponse(e.getMessage())
+        );
     }
 
     @ExceptionHandler(PasswordDoNotMatchException.class)
@@ -59,9 +78,16 @@ public class ControllerAdvice {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
-    @ExceptionHandler(InvalidOrExpiredCodeException.class)
-    public ResponseEntity<String> handlerInvalidOrExpiredCodeException(InvalidOrExpiredCodeException e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    @ExceptionHandler(InvalidVerificationCodeException.class)
+    public ResponseEntity<DefaultResponse> handlerInvalidVerificationCodeException(InvalidVerificationCodeException e){
+
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new DefaultResponse(
+                        false,
+                        e.getMessage()
+                )
+        );
     }
 
     @ExceptionHandler(ValidationException.class)
@@ -77,7 +103,33 @@ public class ControllerAdvice {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<GlobalErrorResponse> handlerMethodArgumentNotValidException(MethodArgumentNotValidException e){
+    public ResponseEntity<?> handlerMethodArgumentNotValidException(
+            MethodArgumentNotValidException e,
+            WebRequest request
+    ){
+
+        String path = ((ServletWebRequest) request) .getRequest().getRequestURI();
+
+        List<String> simpleEndPoints = List.of("/auth/user/confirm-code");
+
+        if (simpleEndPoints.contains(path)) {
+            String message = e.getBindingResult().getAllErrors()
+                    .stream()
+                    .map(ObjectError::getDefaultMessage)
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse("Validation error");
+
+            return ResponseEntity.status(400).body(new DefaultResponse(
+                    false,
+                    message
+                    )
+            );
+        }
+
+
+
+
         Map<String, List<String>> errors = new HashMap<>();
 
         e.getBindingResult().getFieldErrors().forEach(fieldError ->
@@ -95,6 +147,16 @@ public class ControllerAdvice {
         );
 
         return ResponseEntity.status(400).body(globalErrorResponse);
+    }
+
+    @ExceptionHandler(CodeAlreadyVerifiedException.class)
+    public ResponseEntity<DefaultResponse> handlerCodeAlreadyVerifiedException(CodeAlreadyVerifiedException e){
+        return ResponseEntity.status(400).body(
+                new DefaultResponse(
+                        false,
+                        e.getMessage()
+                )
+        );
     }
 
 }

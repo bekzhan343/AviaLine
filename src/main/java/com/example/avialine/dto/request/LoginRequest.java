@@ -16,8 +16,8 @@ import java.io.Serializable;
 @Component
 public class LoginRequest implements Serializable {
 
-    @NotBlank(message = "email cannot be empty!")
-    private String email;
+    @NotBlank(message = "phone cannot be empty!")
+    private String phone;
 
     @NotBlank(message = "password cannot be empty!")
     private String password;

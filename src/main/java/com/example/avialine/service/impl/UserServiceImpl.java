@@ -1,9 +1,7 @@
 package com.example.avialine.service.impl;
 
 import com.example.avialine.dto.UserDTO;
-import com.example.avialine.exception.RoleNotFoundException;
-import com.example.avialine.exception.UserAlreadyExistsException;
-import com.example.avialine.exception.UserNotFoundException;
+import com.example.avialine.exception.*;
 import com.example.avialine.mapper.DTOMapper;
 import com.example.avialine.mapper.EntityMapper;
 import com.example.avialine.messages.ApiErrorMessage;
@@ -16,6 +14,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -80,13 +80,41 @@ public class UserServiceImpl implements UserService {
         return dtoMapper.toUserDTO(updated);
     }
 
+    @Transactional
     @Override
-    public void deleteUserById(@NotNull Integer id) {
-        User findUser = userRepo.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(ApiErrorMessage.USER_NOT_FOUND_MESSAGE.getMessage(id)));
+    public void deleteUserByEmail(@NotNull String email) {
+        User findUser = userRepo.findByEmail(email)
+                .orElseThrow(
+                        () -> new UserNotFoundException(
+                                ApiErrorMessage
+                                        .USER_NOT_FOUND_BY_EMAIL_MESSAGE
+                                        .getMessage(email)
+                        )
+
+                );
 
         findUser.setDeleted(true);
 
         userRepo.save(findUser);
+    }
+
+    @Transactional
+    @Override
+    public User getActiveUserByEmail(String email) {
+        return userRepo.findActiveUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(
+                        ApiErrorMessage.USER_NOT_FOUND_BY_EMAIL_MESSAGE.getMessage(email))
+                );
+
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public User getActiveUserByPhone(String phone) {
+        return userRepo.findActiveUserByPhone(phone)
+                .orElseThrow(() -> new InvalidCredentialsException(
+                        ApiErrorMessage.USER_NOT_FOUND_BY_PHONE_MESSAGE.getMessage(phone)
+                )
+                );
     }
 }

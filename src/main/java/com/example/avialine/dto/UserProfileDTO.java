@@ -1,11 +1,10 @@
 package com.example.avialine.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Builder
 @NoArgsConstructor
@@ -15,19 +14,12 @@ import java.time.LocalDateTime;
 @Component
 public class UserProfileDTO implements Serializable {
 
-    private Integer id;
+    @JsonProperty("token")
+    private String token;
 
-    private String name;
+    @JsonProperty("user_id")
+    private Integer userId;
 
-    private String email;
-
-    private String password;
-
-    private Instant createdAt;
-
-    private Instant lastLogin;
-
-    private String accessToken;
-
-    private String refreshToken;
+    @JsonProperty("phone")
+    private String phone;
 }
