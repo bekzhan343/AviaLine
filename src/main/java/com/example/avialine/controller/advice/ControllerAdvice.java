@@ -21,17 +21,11 @@ import java.util.*;
 public class ControllerAdvice {
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<GlobalErrorResponse> handlerUserNotFoundException(UserNotFoundException e){
-
-        Map<String, List<String>> error = new HashMap<>();
-        error.put("email", List.of(e.getMessage()));
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new GlobalErrorResponse(
+    public ResponseEntity<DefaultResponse> handlerUserNotFoundException(UserNotFoundException e){
+        return ResponseEntity.status(404).body(
+                new DefaultResponse(
                         false,
-                        ApiErrorMessage.ERROR_PROCESSING_REQUEST_MESSAGE.getMessage(),
-                        error
-
+                        e.getMessage()
                 )
         );
     }

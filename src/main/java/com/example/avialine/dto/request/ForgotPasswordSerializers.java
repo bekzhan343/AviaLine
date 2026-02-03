@@ -12,10 +12,9 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ConfirmEmailRequest implements Serializable {
 
-    @Email(message = "invalid email or incorrect email format!")
+public class ForgotPasswordSerializers implements Serializable {
+
+    @Email(message = "invalid email value!")
     private String email;
-
-
 }

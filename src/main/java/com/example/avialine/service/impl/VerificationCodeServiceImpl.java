@@ -108,7 +108,6 @@ public class VerificationCodeServiceImpl  implements VerificationCodeService {
     }
 
     private VerificationCode getVerificationCode(String userEmail, String code){
-
         return verificationCodeRepo
                 .findByUserEmailAndCodeAndVerifiedFalse(userEmail, code)
                 .orElseThrow(

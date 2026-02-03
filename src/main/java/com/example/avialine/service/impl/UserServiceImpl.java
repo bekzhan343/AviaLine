@@ -1,6 +1,6 @@
 package com.example.avialine.service.impl;
 
-import com.example.avialine.dto.UserDTO;
+import com.example.avialine.dto.request.RegisterRequest;
 import com.example.avialine.exception.*;
 import com.example.avialine.mapper.DTOMapper;
 import com.example.avialine.mapper.EntityMapper;
@@ -30,60 +30,29 @@ public class UserServiceImpl implements UserService {
     private final EntityMapper entityMapper;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public UserDTO getUserById(@NotNull Integer id) throws UserNotFoundException {
+    private final String ROLE_USER = "ROLE_USER";
 
-        User user = userRepo.findById(id)
-                .orElseThrow(() ->  new UserNotFoundException(ApiErrorMessage.USER_NOT_FOUND_MESSAGE.getMessage(id)));
-
-
-
-        return dtoMapper.toUserDTO(user);
-    }
 
     @Override
-    public UserDTO createUser(@NotNull UserDTO userDTO) {
-        if (userRepo.existsByName(userDTO.getUsername()) || userRepo.existsByEmail(userDTO.getEmail())){
-            throw new UserAlreadyExistsException(ApiErrorMessage.USER_ALREADY_EXISTS_MESSAGE.getMessage(userDTO.getEmail()));
-        }
-
-        User user = entityMapper.toUser(userDTO);
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        user.setCreatedAt(Instant.now());
-
-        Role roles = roleRepo.findByName("ROLE_USER")
-                        .orElseThrow(() -> new RoleNotFoundException(ApiErrorMessage.ROLE_NOT_FOUND_BY_ID_MESSAGE.getMessage("ROLE_USER")));
-        Set<Role> roleSet = new HashSet<>();
-        roleSet.add(roles);
-
-        user.setRoles(roleSet);
-
-        User saved = userRepo.save(user);
-
-        return dtoMapper.toUserDTO(saved);
-    }
-
-    @Override
-    public UserDTO updateUserByEmail(@NotNull String email,@NotNull UserDTO dto) {
-        User findUser = userRepo.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(ApiErrorMessage.USER_NOT_FOUND_BY_EMAIL_MESSAGE.getMessage(email)));
-
-        findUser.setName(dto.getUsername());
-        findUser.setEmail(dto.getEmail());
-        findUser.setPassword(dto.getPassword());
-        findUser.setPhone(dto.getPhone());
-
-        User updated = userRepo.save(findUser);
-
-        return dtoMapper.toUserDTO(updated);
+    public User createUser(RegisterRequest request) {
+        return User
+                .builder()
+                .name(request.getFirstName())
+                .email(request.getEmail())
+                .phone(request.getPhone())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .roles(getDefaultRole())
+                .createdAt(Instant.now())
+                .lastLogin(null)
+                .enabled(false)
+                .emailVerified(false)
+                .build();
     }
 
     @Transactional
     @Override
     public void deleteUserByEmail(@NotNull String email) {
-        User findUser = userRepo.findByEmail(email)
+        User findUser = userRepo.findActiveUserByEmail(email)
                 .orElseThrow(
                         () -> new UserNotFoundException(
                                 ApiErrorMessage
@@ -116,5 +85,16 @@ public class UserServiceImpl implements UserService {
                         ApiErrorMessage.USER_NOT_FOUND_BY_PHONE_MESSAGE.getMessage(phone)
                 )
                 );
+    }
+
+    private Set<Role> getDefaultRole() {
+        Role role = roleRepo.findByName(ROLE_USER)
+                .orElseThrow(
+                        () -> new RoleNotFoundException(
+                                ApiErrorMessage
+                                        .ROLE_NOT_FOUND_BY_NAME_MESSAGE
+                                        .getMessage(ROLE_USER)));
+
+        return new HashSet<>(Set.of(role));
     }
 }

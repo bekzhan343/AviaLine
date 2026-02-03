@@ -1,7 +1,7 @@
 package com.example.avialine.service.impl;
 
 import com.example.avialine.dto.request.ConfirmCodeRequest;
-import com.example.avialine.dto.request.ConfirmEmailRequest;
+import com.example.avialine.dto.request.ForgotPasswordSerializers;
 import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
@@ -117,7 +117,7 @@ public class AuthServiceImpl implements AuthService {
             throw new  ValidationException("error: ", errors);
         }
 
-        User user = setUser(registerRequest);
+        User user = userService.createUser(registerRequest);
 
         userRepo.save(user);
 
@@ -132,7 +132,7 @@ public class AuthServiceImpl implements AuthService {
             boolean isVerified = emailService.verifyCode(request.getEmail(), request.getCode());
             User user = userService.getActiveUserByEmail(request.getEmail());
             if (!isVerified) {
-                throw new InvalidVerificationCodeException(ApiErrorMessage.INVALID_CODE_MESSAGE.getMessage());
+                throw new InvalidVerificationCodeException(ApiErrorMessage.CODE_ALREADY_VERIFIED_MESSAGE.getMessage());
             }
 
             Authentication auth = new UsernamePasswordAuthenticationToken(
@@ -179,7 +179,7 @@ public class AuthServiceImpl implements AuthService {
 
         String email = auth.getName();
 
-        User user = getUserFromRepo(email);
+        User user = userService.getActiveUserByEmail(email);
 
         return PersonInfoResponse.builder()
                 .username(user.getUsername())
@@ -189,7 +189,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public DefaultResponse sendEmailVerificationCode(@NotNull ConfirmEmailRequest request) throws TransactionException {
+    public DefaultResponse forgotPassword(@NotNull ForgotPasswordSerializers request){
 
         User user = userService.getActiveUserByEmail(request.getEmail());
 
@@ -202,33 +202,6 @@ public class AuthServiceImpl implements AuthService {
         );
 
 
-    }
-
-    private User setUser(RegisterRequest request){
-        return User
-                .builder()
-                .name(request.getFirstName())
-                .email(request.getEmail())
-                .phone(request.getPhone())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .roles(getDefaultRoles())
-                .createdAt(Instant.now())
-                .lastLogin(null)
-                .enabled(false)
-                .emailVerified(false)
-                .build();
-    }
-
-
-    private Set<Role> getDefaultRoles() {
-        Role role = roleRepo.findByName(ROLE_USER)
-                .orElseThrow(
-                        () -> new RoleNotFoundException(
-                                ApiErrorMessage
-                                        .ROLE_NOT_FOUND_BY_NAME_MESSAGE
-                                        .getMessage(ROLE_USER)));
-
-        return new HashSet<>(Set.of(role));
     }
 
 
@@ -252,12 +225,5 @@ public class AuthServiceImpl implements AuthService {
         return savedToken.getToken();
     }
 
-    private User getUserFromRepo(String email){
-        return userRepo.findByEmailAndDeletedFalse(email)
-                .orElseThrow(
-                        () -> new UserNotFoundException(
-                                ApiErrorMessage
-                                        .USER_NOT_FOUND_BY_EMAIL_MESSAGE
-                                        .getMessage(email)));
-    }
+
 }

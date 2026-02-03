@@ -1,7 +1,6 @@
 package com.example.avialine.service.impl;
 
 import com.example.avialine.exception.InvalidCredentialsException;
-import com.example.avialine.exception.UserNotFoundException;
 import com.example.avialine.messages.ApiErrorMessage;
 import com.example.avialine.model.entity.User;
 import com.example.avialine.repo.UserRepo;

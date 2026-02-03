@@ -1,7 +1,7 @@
 package com.example.avialine.service;
 
 import com.example.avialine.dto.request.ConfirmCodeRequest;
-import com.example.avialine.dto.request.ConfirmEmailRequest;
+import com.example.avialine.dto.request.ForgotPasswordSerializers;
 import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
@@ -23,6 +23,6 @@ public interface AuthService {
 
     PersonInfoResponse getPersonalInfo();
 
-    DefaultResponse sendEmailVerificationCode(@NotNull ConfirmEmailRequest request);
+    DefaultResponse forgotPassword(@NotNull ForgotPasswordSerializers request);
 
 }

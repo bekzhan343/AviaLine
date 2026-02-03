@@ -1,13 +1,12 @@
 package com.example.avialine.controller;
 
 import com.example.avialine.dto.request.ConfirmCodeRequest;
-import com.example.avialine.dto.request.ConfirmEmailRequest;
+import com.example.avialine.dto.request.ForgotPasswordSerializers;
 import com.example.avialine.dto.request.LoginRequest;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
 import com.example.avialine.dto.response.ConfirmCodeResponse;
 import com.example.avialine.dto.response.DefaultResponse;
-import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.PersonInfoResponse;
 import com.example.avialine.exception.InvalidCredentialsException;
 import com.example.avialine.exception.UserNotFoundException;
@@ -29,10 +28,10 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("${end.point.auth-login}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<UserProfileDTO> login(@RequestBody @Valid LoginRequest loginRequest){
         UserProfileDTO response = authService.login(loginRequest);
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.status(200).body(response);
     }
 
     @PostMapping("${end.point.auth-register}")
@@ -43,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("${end.point.auth-confirm-code}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> confirmCode(@RequestBody @Valid ConfirmCodeRequest request){
         try {
             ConfirmCodeResponse response = authService.confirmVerificationCode(request);
@@ -76,8 +75,8 @@ public class AuthController {
 
     @PostMapping("${end.point.auth-forgot-password}")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DefaultResponse> sendVerificationCode(@RequestBody ConfirmEmailRequest request){
-        DefaultResponse response = authService.sendEmailVerificationCode(request);
+    public ResponseEntity<DefaultResponse> sendVerificationCode(@RequestBody ForgotPasswordSerializers request){
+        DefaultResponse response = authService.forgotPassword(request);
 
         return ResponseEntity.ok(response);
     }
