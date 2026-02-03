@@ -1,6 +1,7 @@
 package com.example.avialine.security.config;
 
 import com.example.avialine.security.filter.JwtRequestFilter;
+import com.example.avialine.security.util.CustomAuthEntryPoint;
 import com.example.avialine.service.CustomUserDetailsService;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -18,7 +19,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,10 +36,12 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
+    private final CustomAuthEntryPoint customAuthEntryPoint;
+
     private static final String[] DO_NOT_CHECK_URLS = {
             "/auth/user/register",
             "/auth/user/login",
-            "/auth/user/forgot-password",
+            "/auth/user/forgot-password/",
             "/auth/user/confirm-code",
             "/swagger-ui/**",
             "/api-docs/**",
@@ -56,6 +58,9 @@ public class SecurityConfig {
                         .sessionManagement(
                                 session -> session
                                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .exceptionHandling(ex -> ex
+                                .authenticationEntryPoint(customAuthEntryPoint)
+                        )
                         .authorizeHttpRequests( auth -> auth
                                 .requestMatchers(DO_NOT_CHECK_URLS).permitAll()
                                 .anyRequest().authenticated())

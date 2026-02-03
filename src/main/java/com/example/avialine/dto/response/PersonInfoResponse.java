@@ -1,8 +1,11 @@
 package com.example.avialine.dto.response;
 
+import com.example.avialine.dto.UserDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.io.Serializable;
+
 
 @Builder
 @NoArgsConstructor
@@ -12,8 +15,10 @@ import java.io.Serializable;
 @Data
 public class PersonInfoResponse implements Serializable {
 
-    private String email;
-    private String username;
-    private String phone;
+    @JsonProperty("response")
+    private boolean response;
+
+    @JsonProperty("data")
+    private UserDTO data;
 
 }

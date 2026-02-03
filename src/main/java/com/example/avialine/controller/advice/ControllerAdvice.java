@@ -4,7 +4,6 @@ import com.example.avialine.dto.response.DefaultResponse;
 import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.GlobalErrorResponse;
 import com.example.avialine.exception.*;
-import com.example.avialine.messages.ApiErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;

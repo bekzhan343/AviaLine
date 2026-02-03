@@ -30,12 +30,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.*;
 
@@ -175,16 +177,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public PersonInfoResponse getPersonalInfo() {
+
         Authentication auth = SecurityUtil.requireAuthentication();
 
         String email = auth.getName();
 
         User user = userService.getActiveUserByEmail(email);
 
-        return PersonInfoResponse.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .phone(user.getPhone())
+        return PersonInfoResponse
+                .builder()
+                .response(true)
+                .data(dtoMapper.toUserDTO(user))
                 .build();
     }
 

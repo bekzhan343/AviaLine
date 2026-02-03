@@ -7,15 +7,18 @@ import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.request.RegisterRequest;
 import com.example.avialine.dto.response.ConfirmCodeResponse;
 import com.example.avialine.dto.response.DefaultResponse;
+import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.PersonInfoResponse;
 import com.example.avialine.exception.InvalidCredentialsException;
 import com.example.avialine.exception.UserNotFoundException;
+import com.example.avialine.messages.ApiErrorMessage;
 import com.example.avialine.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -67,10 +70,11 @@ public class AuthController {
 
     @GetMapping("${end.point.auth-personal-info}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<PersonInfoResponse> getPersonalInfo(){
-        PersonInfoResponse personalInfo = authService.getPersonalInfo();
+    public ResponseEntity<?> getPersonalInfo(){
 
-        return ResponseEntity.ok(personalInfo);
+            PersonInfoResponse personalInfo = authService.getPersonalInfo();
+            return ResponseEntity.ok(personalInfo);
+
     }
 
     @PostMapping("${end.point.auth-forgot-password}")

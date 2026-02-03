@@ -34,7 +34,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 uri.matches("/auth/user/register") ||
                 uri.matches("/auth/user/login") ||
                 uri.matches("/auth/user/confirm-code") ||
-                uri.matches("/auth/user/forgot-password");
+                uri.matches("/auth/user/forgot-password/");
 
         log.info("=== JWT Filter Check === Method: {}, URI: {}, Skip: {}", method, uri, skip);
 

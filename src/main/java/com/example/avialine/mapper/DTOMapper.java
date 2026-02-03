@@ -10,15 +10,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class DTOMapper {
 
+
     public UserDTO toUserDTO(User user){
-        return UserDTO.builder()
-                .id(user.getId())
-                .username(user.getName())
+        return UserDTO
+                .builder()
+                .firstName(user.getName())
                 .email(user.getEmail())
-                .password(user.getPassword())
-                .phone(user.getPhone())
-                .createdAt(user.getCreatedAt())
-                .lastLogin(user.getLastLogin())
                 .build();
     }
 

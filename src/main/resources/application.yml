@@ -42,7 +42,7 @@ spring:
       com.AviaLine: trace
 
 server:
-  port: 8111
+  port: 8155
 
 end:
   point:
@@ -64,7 +64,7 @@ end:
     auth-confirm-code: /user/confirm-code
     auth-delete-user: /user/delete
     auth-personal-info: /user/personal-info
-    auth-forgot-password: /user/forgot-password
+    auth-forgot-password: /user/forgot-password/
 
 keys:
   access-key: yrQidcrJDGVZJ1wPWTSVoyMsZrwnNvTKzEw4vAchjWo=
