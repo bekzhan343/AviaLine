@@ -10,6 +10,7 @@ import com.example.avialine.dto.response.DefaultResponse;
 import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.PersonInfoResponse;
 import com.example.avialine.exception.InvalidCredentialsException;
+import com.example.avialine.exception.UserAlreadyDeletedException;
 import com.example.avialine.exception.UserNotFoundException;
 import com.example.avialine.messages.ApiErrorMessage;
 import com.example.avialine.service.AuthService;
@@ -61,11 +62,25 @@ public class AuthController {
     }
 
     @DeleteMapping("${end.point.auth-delete-user}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> delete(){
-        authService.deleteUser();
+    public ResponseEntity<?> delete(){
 
-        return ResponseEntity.ok().build();
+        try {
+            authService.deleteUser();
+            return ResponseEntity.status(204).build();
+        }catch (UserNotFoundException e){
+            return ResponseEntity.status(401)
+                    .body(
+                            new DetailErrorResponse(
+                                    ApiErrorMessage.NO_PROVIDED_ACCOUNT_MESSAGE.getMessage()
+                            )
+                    );
+        }catch (BadCredentialsException | UserAlreadyDeletedException e){
+            return ResponseEntity.status(401).body(
+                    new DetailErrorResponse(
+                            ApiErrorMessage.INVALID_CREDENTIALS_MESSAGE.getMessage()
+                    )
+            );
+        }
     }
 
     @GetMapping("${end.point.auth-personal-info}")

@@ -18,7 +18,7 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 
     boolean existsByEmail(@NotNull String email);
 
-    Optional<User> findByEmail(@NotNull String email);
+    Optional<User> findUserByPhone(@NotNull String phone);
 
     Optional<User> findByEmailAndDeletedFalse(@NotNull String email);
 
@@ -44,4 +44,6 @@ public interface UserRepo extends JpaRepository<User, Integer> {
     boolean existsByEmailAndDeletedFalse(@NotNull String email);
 
     boolean existsByPhoneAndDeletedFalse(@NotNull String phone);
+
+
 }

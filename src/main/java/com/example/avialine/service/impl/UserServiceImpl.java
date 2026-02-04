@@ -51,20 +51,11 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void deleteUserByEmail(@NotNull String email) {
-        User findUser = userRepo.findActiveUserByEmail(email)
-                .orElseThrow(
-                        () -> new UserNotFoundException(
-                                ApiErrorMessage
-                                        .USER_NOT_FOUND_BY_EMAIL_MESSAGE
-                                        .getMessage(email)
-                        )
+    public void deleteUser(@NotNull User user) {
 
-                );
+        user.setDeleted(true);
 
-        findUser.setDeleted(true);
-
-        userRepo.save(findUser);
+        userRepo.save(user);
     }
 
     @Transactional
@@ -85,6 +76,26 @@ public class UserServiceImpl implements UserService {
                         ApiErrorMessage.USER_NOT_FOUND_BY_PHONE_MESSAGE.getMessage(phone)
                 )
                 );
+    }
+
+    @Override
+    public User getUserByPhone(String phone) {
+        return userRepo
+                .findUserByPhone(phone)
+                .orElseThrow(
+                        () -> new UserNotFoundException(
+                                ApiErrorMessage
+                                        .USER_NOT_FOUND_BY_PHONE_MESSAGE.getMessage(phone))
+
+                );
+    }
+
+    @Override
+    public boolean validateUserForDeletion(User user) {
+        if (user.isEnabled() && user.isEmailVerified() && !user.isDeleted()) {
+            return true;
+        }
+        return false;
     }
 
     private Set<Role> getDefaultRole() {

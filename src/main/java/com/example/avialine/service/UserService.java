@@ -9,9 +9,13 @@ public interface UserService {
 
     User createUser(RegisterRequest request);
 
-    void deleteUserByEmail(@NotNull String email);
+    void deleteUser(@NotNull User user);
 
     User getActiveUserByEmail(@NotNull String email);
 
     User getActiveUserByPhone(@NotNull String phone);
+
+    User getUserByPhone(@NotNull String phone);
+
+    boolean validateUserForDeletion(@NotNull User user);
 }

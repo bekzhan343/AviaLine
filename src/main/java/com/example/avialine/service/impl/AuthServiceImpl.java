@@ -13,7 +13,6 @@ import com.example.avialine.mapper.DTOMapper;
 import com.example.avialine.messages.ApiErrorMessage;
 import com.example.avialine.messages.ApiMessage;
 import com.example.avialine.model.entity.RefreshToken;
-import com.example.avialine.model.entity.Role;
 import com.example.avialine.model.entity.User;
 import com.example.avialine.repo.RefreshTokenRepo;
 import com.example.avialine.repo.RoleRepo;
@@ -25,23 +24,22 @@ import com.example.avialine.service.EmailService;
 import com.example.avialine.service.UserService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.*;
 
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -53,9 +51,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authManager;
     private final JwtTokenProvider tokenProvider;
     private final UserRepo userRepo;
-    private final RoleRepo roleRepo;
     private final DTOMapper dtoMapper;
-    private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepo refreshTokenRepo;
     private final EmailService emailService;
     private final UserService userService;
@@ -162,11 +158,22 @@ public class AuthServiceImpl implements AuthService {
     public void deleteUser() {
         Authentication auth = SecurityUtil.requireAuthentication();
 
-        String email = auth.getName();
+        String phone = auth.getName();
 
-        User user = userService.getActiveUserByEmail(email);
+        log.info("phone: " + phone);
 
-        userService.deleteUserByEmail(email);
+        User user = userService.getUserByPhone(phone);
+
+        boolean isActive = userService.validateUserForDeletion(user);
+
+        if (!isActive){
+            throw new UserAlreadyDeletedException(
+                    ApiErrorMessage
+                            .USER_ALREADY_DELETED_MESSAGE.getMessage()
+            );
+        }
+
+        userService.deleteUser(user);
 
         List<RefreshToken> tokens = refreshTokenRepo.findAllByUserAndRevokedFalse(user);
         tokens.forEach(token -> token.setRevoked(true));
