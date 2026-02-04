@@ -1,26 +1,25 @@
 package com.example.avialine.controller;
 
-import com.example.avialine.dto.request.ConfirmCodeRequest;
-import com.example.avialine.dto.request.ForgotPasswordSerializers;
-import com.example.avialine.dto.request.LoginRequest;
+import com.example.avialine.dto.request.*;
 import com.example.avialine.dto.UserProfileDTO;
-import com.example.avialine.dto.request.RegisterRequest;
-import com.example.avialine.dto.response.ConfirmCodeResponse;
-import com.example.avialine.dto.response.DefaultResponse;
-import com.example.avialine.dto.response.DetailErrorResponse;
-import com.example.avialine.dto.response.PersonInfoResponse;
-import com.example.avialine.exception.InvalidCredentialsException;
-import com.example.avialine.exception.UserAlreadyDeletedException;
-import com.example.avialine.exception.UserNotFoundException;
+import com.example.avialine.dto.response.*;
+import com.example.avialine.exception.*;
 import com.example.avialine.messages.ApiErrorMessage;
 import com.example.avialine.service.AuthService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.AuthException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -52,9 +51,9 @@ public class AuthController {
             ConfirmCodeResponse response = authService.confirmVerificationCode(request);
 
             return ResponseEntity.ok(response);
-        }catch (InvalidCredentialsException  |UserNotFoundException e){
+        }catch (InvalidCredentialsException  | UserNotFoundException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new DefaultResponse(
-                    true,
+                    false,
                     e.getMessage()
                     )
             );
@@ -98,6 +97,31 @@ public class AuthController {
         DefaultResponse response = authService.forgotPassword(request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("${end.point.auth-modify-password}")
+    public ResponseEntity<?> modifyPassword(@RequestBody @Valid ModifyPasswordRequest request){
+        try {
+            DefaultResponse response = authService.modifyPassword(request);
+            return ResponseEntity.status(200).body(response);
+        }catch (InvalidCredentialsException | BadCredentialsException e){
+            return ResponseEntity.status(401).body(
+                    new DetailErrorResponse(
+                            ApiErrorMessage.NO_PROVIDED_ACCOUNT_MESSAGE.getMessage()
+                    )
+            );
+        }catch (PasswordDoNotMatchException e){
+            Map<String, List<String>> errors = new HashMap<>();
+            errors.put("error", List.of(e.getMessage()));
+            return ResponseEntity.badRequest().body(
+
+                    new GlobalErrorResponse(
+                            false,
+                            ApiErrorMessage.ERROR_PROCESSING_REQUEST_MESSAGE.getMessage(),
+                            errors
+                    )
+            );
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.avialine.service;
 
 
+import com.example.avialine.dto.request.ModifyPasswordRequest;
 import com.example.avialine.dto.request.RegisterRequest;
 import com.example.avialine.model.entity.User;
 import jakarta.validation.constraints.NotNull;
@@ -18,4 +19,6 @@ public interface UserService {
     User getUserByPhone(@NotNull String phone);
 
     boolean validateUserForDeletion(@NotNull User user);
+
+    void changeUserPassword(@NotNull User user,@NotNull ModifyPasswordRequest request);
 }

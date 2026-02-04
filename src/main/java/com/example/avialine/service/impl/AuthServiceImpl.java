@@ -1,10 +1,7 @@
 package com.example.avialine.service.impl;
 
-import com.example.avialine.dto.request.ConfirmCodeRequest;
-import com.example.avialine.dto.request.ForgotPasswordSerializers;
-import com.example.avialine.dto.request.LoginRequest;
+import com.example.avialine.dto.request.*;
 import com.example.avialine.dto.UserProfileDTO;
-import com.example.avialine.dto.request.RegisterRequest;
 import com.example.avialine.dto.response.ConfirmCodeResponse;
 import com.example.avialine.dto.response.DefaultResponse;
 import com.example.avialine.dto.response.PersonInfoResponse;
@@ -15,7 +12,6 @@ import com.example.avialine.messages.ApiMessage;
 import com.example.avialine.model.entity.RefreshToken;
 import com.example.avialine.model.entity.User;
 import com.example.avialine.repo.RefreshTokenRepo;
-import com.example.avialine.repo.RoleRepo;
 import com.example.avialine.repo.UserRepo;
 import com.example.avialine.security.provider.JwtTokenProvider;
 import com.example.avialine.security.util.SecurityUtil;
@@ -31,7 +27,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -187,9 +182,9 @@ public class AuthServiceImpl implements AuthService {
 
         Authentication auth = SecurityUtil.requireAuthentication();
 
-        String email = auth.getName();
+        String phone = auth.getName();
 
-        User user = userService.getActiveUserByEmail(email);
+        User user = userService.getActiveUserByPhone(phone);
 
         return PersonInfoResponse
                 .builder()
@@ -212,6 +207,24 @@ public class AuthServiceImpl implements AuthService {
         );
 
 
+    }
+
+    @Transactional
+    @Override
+    public DefaultResponse modifyPassword(@NotNull ModifyPasswordRequest request) {
+
+        Authentication auth = SecurityUtil.requireAuthentication();
+
+        String phone = auth.getName();
+
+        User user = userService.getActiveUserByPhone(phone);
+
+        userService.changeUserPassword(user, request);
+
+        return new DefaultResponse(
+                true,
+                ApiMessage.SUCCESSFULLY_MODIFIED_PASSWORD_MESSAGE.getMessage()
+        );
     }
 
 

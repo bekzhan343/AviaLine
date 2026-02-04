@@ -1,5 +1,6 @@
 package com.example.avialine.service.impl;
 
+import com.example.avialine.dto.request.ModifyPasswordRequest;
 import com.example.avialine.dto.request.RegisterRequest;
 import com.example.avialine.exception.*;
 import com.example.avialine.mapper.DTOMapper;
@@ -96,6 +97,17 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void changeUserPassword(@NotNull User user, ModifyPasswordRequest request) {
+        if (!request.getPassword().equals(request.getConfirmPassword())){
+            throw new PasswordDoNotMatchException(ApiErrorMessage.PASSWORD_DO_NOT_MATCH_MESSAGE.getMessage());
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        userRepo.save(user);
     }
 
     private Set<Role> getDefaultRole() {

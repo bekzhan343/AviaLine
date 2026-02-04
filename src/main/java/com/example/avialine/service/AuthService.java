@@ -1,10 +1,7 @@
 package com.example.avialine.service;
 
-import com.example.avialine.dto.request.ConfirmCodeRequest;
-import com.example.avialine.dto.request.ForgotPasswordSerializers;
-import com.example.avialine.dto.request.LoginRequest;
+import com.example.avialine.dto.request.*;
 import com.example.avialine.dto.UserProfileDTO;
-import com.example.avialine.dto.request.RegisterRequest;
 import com.example.avialine.dto.response.ConfirmCodeResponse;
 import com.example.avialine.dto.response.DefaultResponse;
 import com.example.avialine.dto.response.PersonInfoResponse;
@@ -24,5 +21,7 @@ public interface AuthService {
     PersonInfoResponse getPersonalInfo();
 
     DefaultResponse forgotPassword(@NotNull ForgotPasswordSerializers request);
+
+    DefaultResponse modifyPassword(@NotNull ModifyPasswordRequest request);
 
 }
