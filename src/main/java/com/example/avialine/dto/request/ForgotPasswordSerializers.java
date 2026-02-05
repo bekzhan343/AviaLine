@@ -1,6 +1,6 @@
 package com.example.avialine.dto.request;
 
-import jakarta.validation.constraints.Email;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +15,5 @@ import java.io.Serializable;
 
 public class ForgotPasswordSerializers implements Serializable {
 
-    @Email(message = "invalid email value!")
     private String email;
 }

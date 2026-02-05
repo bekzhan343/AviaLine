@@ -46,4 +46,5 @@ public interface UserRepo extends JpaRepository<User, Integer> {
     boolean existsByPhoneAndDeletedFalse(@NotNull String phone);
 
 
+
 }

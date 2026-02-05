@@ -6,15 +6,13 @@ import com.example.avialine.dto.response.*;
 import com.example.avialine.exception.*;
 import com.example.avialine.messages.ApiErrorMessage;
 import com.example.avialine.service.AuthService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.AuthException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -119,6 +117,24 @@ public class AuthController {
                             false,
                             ApiErrorMessage.ERROR_PROCESSING_REQUEST_MESSAGE.getMessage(),
                             errors
+                    )
+            );
+        }
+    }
+
+    @PostMapping("${end.point.auth-re-send-email}")
+    public ResponseEntity<DefaultResponse> resendEmail(@RequestBody ForgotPasswordSerializers request){
+        try {
+
+            DefaultResponse response = authService.resendCodeToEmail(request);
+
+            return ResponseEntity.status(200).body(response);
+
+        } catch (UserNotFoundException | InvalidCredentialsException e){
+            return ResponseEntity.status(404).body(
+                    new DefaultResponse(
+                            false,
+                            ApiErrorMessage.USER_NOT_FOUND_BY_EMAIL_MESSAGE.getMessage(request.getEmail())
                     )
             );
         }

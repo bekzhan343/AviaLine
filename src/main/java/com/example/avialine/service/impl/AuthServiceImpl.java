@@ -227,6 +227,18 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
+    @Override
+    public DefaultResponse resendCodeToEmail(ForgotPasswordSerializers request) {
+        User user = userService.getUserByEmailAndDeletedFalse(request.getEmail());
+
+        emailService.sendVerificationCode(user.getEmail());
+
+        return new DefaultResponse(
+                true,
+                ApiMessage.VERIFICATION_CODE_SENT_MESSAGE.getMessage()
+        );
+    }
+
 
     private String saveRefreshTokenInDB(@NotNull String refreshStr, User user){
         refreshTokenRepo

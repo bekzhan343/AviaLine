@@ -45,7 +45,8 @@ public class SecurityConfig {
             "/auth/user/confirm-code",
             "/swagger-ui/**",
             "/api-docs/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/auth/user/re-send/email"
     };
 
 

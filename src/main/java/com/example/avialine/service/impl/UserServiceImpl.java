@@ -69,6 +69,17 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public User getUserByEmailAndDeletedFalse(String email) {
+        return userRepo
+                .findByEmailAndDeletedFalse(email)
+                .orElseThrow(
+                        () -> new UserNotFoundException(
+                                ApiErrorMessage.USER_NOT_FOUND_BY_EMAIL_MESSAGE.getMessage(email)
+                        )
+                );
+    }
+
     @Transactional(readOnly = true)
     @Override
     public User getActiveUserByPhone(String phone) {

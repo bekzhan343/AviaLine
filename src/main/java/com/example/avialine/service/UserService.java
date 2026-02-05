@@ -14,6 +14,8 @@ public interface UserService {
 
     User getActiveUserByEmail(@NotNull String email);
 
+    User getUserByEmailAndDeletedFalse(@NotNull String email);
+
     User getActiveUserByPhone(@NotNull String phone);
 
     User getUserByPhone(@NotNull String phone);
