@@ -239,6 +239,28 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
+    @Override
+    public DefaultResponse logout() {
+        Authentication auth = SecurityUtil.requireAuthentication();
+
+        String phone = auth.getName();
+
+        User user = userService.getActiveUserByPhone(phone);
+
+        List<RefreshToken> tokens = refreshTokenRepo.findAllByUserAndRevokedFalse(user);
+
+        tokens.forEach(token -> token.setRevoked(true));
+
+        refreshTokenRepo.saveAll(tokens);
+
+        SecurityContextHolder.getContext().setAuthentication(null);
+
+        return new DefaultResponse(
+                true,
+                ApiMessage.LOGOUT_DONE_MESSAGE.getMessage()
+        );
+    }
+
 
     private String saveRefreshTokenInDB(@NotNull String refreshStr, User user){
         refreshTokenRepo

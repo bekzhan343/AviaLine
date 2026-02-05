@@ -67,6 +67,7 @@ end:
     auth-forgot-password: /user/forgot-password/
     auth-modify-password: /user/modify-password/
     auth-re-send-email: /user/re-send/email
+    auth-logout: /user/logout/
 
 keys:
   access-key: yrQidcrJDGVZJ1wPWTSVoyMsZrwnNvTKzEw4vAchjWo=

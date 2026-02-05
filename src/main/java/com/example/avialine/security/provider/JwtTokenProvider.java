@@ -119,6 +119,7 @@ public class JwtTokenProvider {
                     .build()
                     .parseClaimsJws(token); // .parseClaimsJws(token) this token fully checks the token!
 
+
             return true;
         }catch (ExpiredJwtException e){
             return false;

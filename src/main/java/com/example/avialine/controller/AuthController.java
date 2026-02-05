@@ -140,4 +140,20 @@ public class AuthController {
         }
     }
 
+    @PostMapping("${end.point.auth-logout}")
+    public ResponseEntity<DefaultResponse> logout(){
+        try {
+            DefaultResponse response = authService.logout();
+
+            return ResponseEntity.status(200).body(response);
+        }catch (InvalidCredentialsException | UnauthorizedException | BadCredentialsException e ){
+            return ResponseEntity.status(400).body(
+                    new DefaultResponse(
+                            false,
+                            ApiErrorMessage.NO_PROVIDED_ACCOUNT_MESSAGE.getMessage()
+                    )
+            );
+        }
+    }
+
 }
