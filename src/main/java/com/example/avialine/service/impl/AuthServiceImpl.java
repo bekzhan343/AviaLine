@@ -261,6 +261,33 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
+    @Override
+    public DefaultResponse modifyPersonInfo(ModifyPersonInfoRequest request) {
+
+        Authentication auth = SecurityUtil.requireAuthentication();
+
+        String phone = auth.getName();
+
+        User user = userService.getActiveUserByPhone(phone);
+
+        if (!user.getEmail().equals(request.getEmail())) {
+            if (userRepo.existsByEmailAndEnabledTrueAndDeletedFalse(request.getEmail())){
+                throw new UserAlreadyExistsException(
+                        ApiErrorMessage.USER_ALREADY_EXISTS_MESSAGE.getMessage(request.getEmail())
+                );
+            }
+        }
+        user.setEmail(request.getEmail());
+        user.setName(request.getFirstName());
+
+        userRepo.save(user);
+
+        return new DefaultResponse(
+                true,
+                ApiMessage.SUCCESSFULLY_MODIFIED_PASSWORD_MESSAGE.getMessage()
+        );
+    }
+
 
     private String saveRefreshTokenInDB(@NotNull String refreshStr, User user){
         refreshTokenRepo

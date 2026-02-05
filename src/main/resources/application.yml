@@ -68,7 +68,7 @@ end:
     auth-modify-password: /user/modify-password/
     auth-re-send-email: /user/re-send/email
     auth-logout: /user/logout/
-
+    auth-modify-person-info: /user/modify-personal/
 keys:
   access-key: yrQidcrJDGVZJ1wPWTSVoyMsZrwnNvTKzEw4vAchjWo=
   refresh-key: RMBb5tiiRxwL+KMXEqfA4zykANDFSxoZeI5ofmEgx+4=

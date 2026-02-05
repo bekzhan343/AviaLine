@@ -156,4 +156,33 @@ public class AuthController {
         }
     }
 
+
+    @PostMapping("${end.point.auth-modify-person-info}")
+    public ResponseEntity<?> modifyPersonInfo(@RequestBody @Valid ModifyPersonInfoRequest request){
+        try {
+            DefaultResponse response = authService.modifyPersonInfo(request);
+
+            return ResponseEntity.status(200).body(response);
+        }catch (InvalidCredentialsException | BadCredentialsException e){
+            return ResponseEntity.status(401).body(
+                    new DetailErrorResponse(
+                            ApiErrorMessage.INVALID_CREDENTIALS_MESSAGE.getMessage()
+                    )
+            );
+        }catch (UserAlreadyExistsException e){
+            return ResponseEntity.status(409)
+                    .body(
+                            new DetailErrorResponse(
+                                    ApiErrorMessage.USER_ALREADY_EXISTS_MESSAGE.getMessage(request.getFirstName())
+                            )
+                    );
+        }catch (UnauthorizedException e){
+            return ResponseEntity.status(401).body(
+                    new DetailErrorResponse(
+                            ApiErrorMessage.NO_PROVIDED_ACCOUNT_MESSAGE.getMessage()
+                    )
+            );
+        }
+    }
+
 }

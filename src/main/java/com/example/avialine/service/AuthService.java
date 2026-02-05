@@ -27,4 +27,6 @@ public interface AuthService {
     DefaultResponse resendCodeToEmail(@NotNull ForgotPasswordSerializers request);
 
     DefaultResponse logout();
+
+    DefaultResponse modifyPersonInfo(@NotNull ModifyPersonInfoRequest request);
 }
