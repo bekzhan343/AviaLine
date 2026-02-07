@@ -1,11 +1,10 @@
 package com.example.avialine.mapper;
 
-import com.example.avialine.dto.RoleDTO;
-import com.example.avialine.dto.UserDTO;
-import com.example.avialine.dto.UserProfileDTO;
-import com.example.avialine.model.entity.Role;
-import com.example.avialine.model.entity.User;
+import com.example.avialine.dto.*;
+import com.example.avialine.model.entity.*;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class DTOMapper {
@@ -34,4 +33,44 @@ public class DTOMapper {
                 .phone(user.getPhone())
                 .build();
     }
+
+    public CountryDTO toCountryDTO(Country country){
+        return CountryDTO
+                .builder()
+                .code(country.getCode())
+                .name(country.getName())
+                .build();
+    }
+
+    public AvailDocsDTO toDocsDTO(Doc doc, List<String> countryDTOS){
+        return AvailDocsDTO.
+                builder()
+                .code(doc.getCode())
+                .name(doc.getName())
+                .avail(countryDTOS)
+                .build();
+    }
+
+    public BannerDTO toBannerDTO(Banner banner){
+        return BannerDTO
+                .builder()
+                .language(banner.getLanguage())
+                .image(banner.getImage())
+                .imageMobile(banner.getImageMobile())
+                .title(banner.getTitle())
+                .slug(banner.getSlug())
+                .description(banner.getDescription())
+                .build();
+    }
+
+    public RuleDTO toRuleDTO(Rule rule){
+        return RuleDTO
+                .builder()
+                .language(rule.getLanguage())
+                .slug(rule.getSlug())
+                .title(rule.getTitle())
+                .description(rule.getDescription())
+                .build();
+    }
+
 }

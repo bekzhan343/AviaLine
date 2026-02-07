@@ -46,7 +46,11 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/api-docs/**",
             "/v3/api-docs/**",
-            "/auth/user/re-send/email"
+            "/auth/user/re-send/email",
+            "/base/api/countries/",
+            "/base/api/docs/",
+            "/base/banners/",
+            "/base/company-rules/"
     };
 
 
