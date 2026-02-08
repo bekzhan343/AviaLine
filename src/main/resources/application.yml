@@ -42,7 +42,7 @@ spring:
       com.AviaLine: trace
 
 server:
-  port: 8156
+  port: 8157
 
 end:
   point:
@@ -52,6 +52,9 @@ end:
     base-docs: /api/docs/
     base-banners: /banners/
     base-rules: /company-rules/
+    base-faq: /faq/
+    base-faq-slug: /faq/{slug}/
+    base-info: /info/
 
     user-base: /users
     user-id: /{id}

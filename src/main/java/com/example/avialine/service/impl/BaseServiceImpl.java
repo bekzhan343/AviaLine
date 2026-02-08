@@ -1,27 +1,20 @@
 package com.example.avialine.service.impl;
 
-import com.example.avialine.dto.AvailDocsDTO;
-import com.example.avialine.dto.BannerDTO;
-import com.example.avialine.dto.CountryDTO;
-import com.example.avialine.dto.RuleDTO;
+import com.example.avialine.dto.*;
+import com.example.avialine.dto.response.FaqAnswerResponse;
+import com.example.avialine.dto.response.GetFaqResponse;
+import com.example.avialine.dto.response.InfoSubInfoResponse;
 import com.example.avialine.mapper.DTOMapper;
-import com.example.avialine.model.entity.Banner;
-import com.example.avialine.model.entity.Country;
-import com.example.avialine.model.entity.Doc;
-import com.example.avialine.model.entity.Rule;
-import com.example.avialine.repo.BannerRepo;
-import com.example.avialine.repo.CountryRepo;
-import com.example.avialine.repo.DocRepo;
-import com.example.avialine.repo.RuleRepo;
+import com.example.avialine.model.entity.*;
+import com.example.avialine.repo.*;
 import com.example.avialine.service.BaseService;
-import com.github.slugify.Slugify;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @RequiredArgsConstructor
 @Service
@@ -32,6 +25,9 @@ public class BaseServiceImpl implements BaseService {
     private final DocRepo docRepo;
     private final BannerRepo bannerRepo;
     private final RuleRepo ruleRepo;
+    private final FaqRepo faqRepo;
+    private final InfoPageRepo infoPageRepo;
+    private final SubInfoRepo subInfoRepo;
 
     @Override
     public List<CountryDTO> getCountries() {
@@ -100,4 +96,53 @@ public class BaseServiceImpl implements BaseService {
 
         return ruleDTOS;
     }
+
+    @Override
+    public List<GetFaqResponse> getFaq() {
+
+        List<Faq> faqs = faqRepo.findAll();
+        List<GetFaqResponse> faqResponses = new ArrayList<>();
+
+        for (Faq faq : faqs){
+            faqResponses.add(dtoMapper.toGetFaqResponse(faq));
+        }
+
+        return faqResponses;
+    }
+
+    @Override
+    public FaqAnswerResponse getFaqAnswerBySlug(@NonNull String slug) {
+
+        Faq faq = faqRepo.findBySlug(slug);
+
+
+        return dtoMapper.toFaqAnswerResponse(faq);
+    }
+
+    @Override
+    public InfoSubInfoResponse getInfo() {
+
+
+        List<InfoPage> infoPages = infoPageRepo.findAllWithSubInfos();
+
+
+        List<InfoPageDTO> infoPageDTOS = new ArrayList<>();
+
+        for (InfoPage infoPage : infoPages){
+
+            List<SubInfoDTO> subInfoDTOS = infoPage.getSubInfos()
+                    .stream()
+                    .map(dtoMapper::toSubInfoDTO)
+                    .toList();
+
+            InfoPageDTO infoPageDTO = dtoMapper.toInfoPageDTO(infoPage);
+            infoPageDTO.setSubInfos(subInfoDTOS);
+
+            infoPageDTOS.add(infoPageDTO);
+        }
+
+       return new InfoSubInfoResponse(infoPageDTOS);
+    }
+
+
 }

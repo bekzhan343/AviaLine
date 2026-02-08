@@ -12,6 +12,7 @@ public enum ApiErrorMessage {
     UNAUTHORIZED_MESSAGE("user is not authenticated!"),
     USER_ALREADY_EXISTS_MESSAGE("user already exists by email -> %s !"),
     USER_NOT_ENABLED_MESSAGE("user is not enabled!"),
+    FAQ_NOT_FOUND_MESSAGE("FAQ not found!"),
 
     ROLE_NOT_FOUND_BY_ID_MESSAGE("role not found by id -> %s !"),
     ROLE_NOT_FOUND_BY_NAME_MESSAGE("role not found by name -> %s !"),
@@ -36,7 +37,6 @@ public enum ApiErrorMessage {
     INVALID_PASSWORD_OR_PHONE_MESSAGE("invalid phone number or password!"),
     INVALID_CREDENTIALS_MESSAGE("Please enter the correct account username and password!"),
     NO_PROVIDED_ACCOUNT_MESSAGE("no accounts provided!");
-
 
     private final String message;
 

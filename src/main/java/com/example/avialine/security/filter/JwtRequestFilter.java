@@ -31,6 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         boolean skip =
                 uri.startsWith("/swagger-ui") ||
                 uri.startsWith("/api-docs") ||
+                uri.startsWith("/base/faq/") ||
                 uri.matches("/auth/user/register") ||
                 uri.matches("/auth/user/login") ||
                 uri.matches("/auth/user/confirm-code") ||
@@ -39,7 +40,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 uri.matches("/base/api/docs/") ||
                 uri.matches("/base/api/countries/") ||
                 uri.matches("/base/banners/") ||
-                uri.matches("/base/company-rules/");
+                uri.matches("/base/company-rules/") ||
+                uri.matches("/base/faq/") ||
+                uri.matches("/base/info/");
 
         log.info("=== JWT Filter Check === Method: {}, URI: {}, Skip: {}", method, uri, skip);
 

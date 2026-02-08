@@ -1,6 +1,9 @@
 package com.example.avialine.mapper;
 
 import com.example.avialine.dto.*;
+import com.example.avialine.dto.response.FaqAnswerResponse;
+import com.example.avialine.dto.response.GetFaqResponse;
+import com.example.avialine.dto.response.InfoSubInfoResponse;
 import com.example.avialine.model.entity.*;
 import org.springframework.stereotype.Component;
 
@@ -72,5 +75,44 @@ public class DTOMapper {
                 .description(rule.getDescription())
                 .build();
     }
+
+    public GetFaqResponse toGetFaqResponse(Faq faq){
+        return GetFaqResponse.builder()
+                .language(faq.getLanguage())
+                .slug(faq.getSlug())
+                .question(faq.getQuestion())
+                .build();
+    }
+
+    public FaqAnswerResponse toFaqAnswerResponse(Faq faq){
+        return FaqAnswerResponse
+                .builder()
+                .question(faq.getQuestion())
+                .answer(faq.getAnswer())
+                .build();
+    }
+
+    public InfoPageDTO toInfoPageDTO(InfoPage infoPage){
+        return InfoPageDTO
+                .builder()
+                .language(infoPage.getLanguage())
+                .slug(infoPage.getSlug())
+                .title(infoPage.getTitle())
+                .description(infoPage.getDescription())
+                .backgroundColor(infoPage.getBackgroundColor())
+                .image(infoPage.getImage())
+                .build();
+    }
+
+    public SubInfoDTO toSubInfoDTO(SubInfo subInfo) {
+        return SubInfoDTO
+                .builder()
+                .title(subInfo.getTitle())
+                .slug(subInfo.getSlug())
+                .description(subInfo.getDescription())
+                .subject(subInfo.getSubject())
+                .build();
+    }
+
 
 }

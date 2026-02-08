@@ -50,7 +50,10 @@ public class SecurityConfig {
             "/base/api/countries/",
             "/base/api/docs/",
             "/base/banners/",
-            "/base/company-rules/"
+            "/base/company-rules/",
+            "/base/faq/",
+            "/base/faq/{slug}/",
+            "/base/info/"
     };
 
 
