@@ -53,7 +53,10 @@ public class SecurityConfig {
             "/base/company-rules/",
             "/base/faq/",
             "/base/faq/{slug}/",
-            "/base/info/"
+            "/base/info/",
+            "/base/popular-directories/",
+            "/base/stories/",
+            "/base/stories/{id}"
     };
 
 

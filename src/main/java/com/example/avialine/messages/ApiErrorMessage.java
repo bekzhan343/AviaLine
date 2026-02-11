@@ -36,7 +36,8 @@ public enum ApiErrorMessage {
 
     INVALID_PASSWORD_OR_PHONE_MESSAGE("invalid phone number or password!"),
     INVALID_CREDENTIALS_MESSAGE("Please enter the correct account username and password!"),
-    NO_PROVIDED_ACCOUNT_MESSAGE("no accounts provided!");
+    NO_PROVIDED_ACCOUNT_MESSAGE("no accounts provided!"),
+    NO_STORY_MATCHES_MESSAGE("No story matches by given id!");
 
     private final String message;
 

@@ -4,7 +4,10 @@ import com.example.avialine.dto.*;
 import com.example.avialine.dto.response.FaqAnswerResponse;
 import com.example.avialine.dto.response.GetFaqResponse;
 import com.example.avialine.dto.response.InfoSubInfoResponse;
+import com.example.avialine.dto.response.PopularDirectsResponse;
+import com.example.avialine.exception.NoStoryMatchesException;
 import com.example.avialine.mapper.DTOMapper;
+import com.example.avialine.messages.ApiErrorMessage;
 import com.example.avialine.model.entity.*;
 import com.example.avialine.repo.*;
 import com.example.avialine.service.BaseService;
@@ -28,6 +31,8 @@ public class BaseServiceImpl implements BaseService {
     private final FaqRepo faqRepo;
     private final InfoPageRepo infoPageRepo;
     private final SubInfoRepo subInfoRepo;
+    private final PopularDirectoryRepo popularDirectoryRepo;
+    private final StoryRepo storyRepo;
 
     @Override
     public List<CountryDTO> getCountries() {
@@ -144,5 +149,43 @@ public class BaseServiceImpl implements BaseService {
        return new InfoSubInfoResponse(infoPageDTOS);
     }
 
+    @Override
+    public List<PopularDirectsResponse> getPopularDirects() {
 
+        List<PopularDirectory> pdList = popularDirectoryRepo.findAll();
+
+        List<PopularDirectsResponse> pdResponses = new ArrayList<>();
+
+        for (PopularDirectory popularDirectory : pdList) {
+            PopularDirectsResponse directsResponse = dtoMapper.toPopularDirectsResponse(popularDirectory);
+
+            pdResponses.add(directsResponse);
+        }
+
+        return pdResponses;
+    }
+
+    @Override
+    public List<StoryDTO> getStories() {
+
+        List<StoryDTO> storyDTOS = new ArrayList<>();
+
+        List<Story> stories = storyRepo.findAll();
+
+        for (Story story : stories){
+            StoryDTO response = dtoMapper.toStoryDTO(story);
+
+            storyDTOS.add(response);
+        }
+
+        return storyDTOS;
+    }
+
+    @Override
+    public StoryDTO getStoryById(Integer id) {
+        Story story = storyRepo.findById(id)
+                .orElseThrow(() -> new NoStoryMatchesException(ApiErrorMessage.NO_STORY_MATCHES_MESSAGE.getMessage(id)));
+
+        return dtoMapper.toStoryDTO(story);
+    }
 }

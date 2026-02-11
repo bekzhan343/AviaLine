@@ -1,12 +1,7 @@
 package com.example.avialine.service;
 
-import com.example.avialine.dto.AvailDocsDTO;
-import com.example.avialine.dto.BannerDTO;
-import com.example.avialine.dto.CountryDTO;
-import com.example.avialine.dto.RuleDTO;
-import com.example.avialine.dto.response.FaqAnswerResponse;
-import com.example.avialine.dto.response.GetFaqResponse;
-import com.example.avialine.dto.response.InfoSubInfoResponse;
+import com.example.avialine.dto.*;
+import com.example.avialine.dto.response.*;
 
 
 import java.util.List;
@@ -26,4 +21,10 @@ public interface BaseService {
     FaqAnswerResponse getFaqAnswerBySlug(String slug);
 
     InfoSubInfoResponse getInfo();
+
+    List<PopularDirectsResponse> getPopularDirects();
+
+    List<StoryDTO> getStories();
+
+    StoryDTO getStoryById(Integer id);
 }

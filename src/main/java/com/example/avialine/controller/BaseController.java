@@ -1,12 +1,8 @@
 package com.example.avialine.controller;
 
-import com.example.avialine.dto.AvailDocsDTO;
-import com.example.avialine.dto.BannerDTO;
-import com.example.avialine.dto.CountryDTO;
-import com.example.avialine.dto.RuleDTO;
-import com.example.avialine.dto.response.FaqAnswerResponse;
-import com.example.avialine.dto.response.GetFaqResponse;
-import com.example.avialine.dto.response.InfoSubInfoResponse;
+import com.example.avialine.dto.*;
+import com.example.avialine.dto.response.*;
+import com.example.avialine.exception.NoStoryMatchesException;
 import com.example.avialine.service.BaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -59,5 +55,26 @@ public class BaseController {
     @GetMapping("${end.point.base-info}")
     public ResponseEntity<InfoSubInfoResponse> getInfoSubInfo(){
         return ResponseEntity.status(200).body(baseService.getInfo());
+    }
+
+    @GetMapping("${end.point.base-popular-directories}")
+    private ResponseEntity<List<PopularDirectsResponse>> getPopularDirectories(){
+        return ResponseEntity.status(200).body(baseService.getPopularDirects());
+    }
+
+    @GetMapping("${end.point.base-stories}")
+    private ResponseEntity<List<StoryDTO>> getStories(){
+        return ResponseEntity.status(200).body(baseService.getStories());
+    }
+
+    @GetMapping("${end.point.base-story-by-id}")
+    private ResponseEntity<?> getStoryById(@PathVariable("id") Integer id){
+        try {
+            return ResponseEntity.status(200).body(baseService.getStoryById(id));
+        }catch (NoStoryMatchesException e){
+            return ResponseEntity.status(404).body(
+                    new DetailErrorResponse(e.getMessage())
+            );
+        }
     }
 }

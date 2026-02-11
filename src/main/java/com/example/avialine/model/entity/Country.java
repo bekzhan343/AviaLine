@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -33,4 +34,7 @@ public class Country {
             inverseJoinColumns = @JoinColumn(name = "doc_id")
     )
     private Set<Doc> docs;
+
+    @OneToMany(mappedBy = "country", cascade = CascadeType.ALL)
+    private List<Airport> airports;
 }
