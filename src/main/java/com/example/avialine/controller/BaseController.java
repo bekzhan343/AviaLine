@@ -2,9 +2,9 @@ package com.example.avialine.controller;
 
 import com.example.avialine.dto.*;
 import com.example.avialine.dto.response.*;
+import com.example.avialine.exception.NoDirectionFoundException;
 import com.example.avialine.exception.NoStoryMatchesException;
 import com.example.avialine.messages.ApiErrorMessage;
-import com.example.avialine.repo.SubInfoRepo;
 import com.example.avialine.service.BaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +57,7 @@ public class BaseController {
     }
 
     @GetMapping("${end.point.base-popular-directories}")
-    private ResponseEntity<List<PopularDirectsResponse>> getPopularDirectories(){
+    private ResponseEntity<List<PopularDirectDTO>> getPopularDirectories(){
         return ResponseEntity.status(200).body(baseService.getPopularDirects());
     }
 
@@ -78,12 +78,27 @@ public class BaseController {
     }
 
     @GetMapping("${end.point.base-sub-info}")
-    public ResponseEntity<?> getSubInfoBySlug(@RequestParam("slug") String slug){
+    public ResponseEntity<?> getPopularDirectDetail(@RequestParam("slug") String slug){
         try {
             return ResponseEntity.status(200).body(baseService.getSubInfoBySlug(slug));
         }catch (NullPointerException e){
             return ResponseEntity.status(404).body(
                     new DetailErrorResponse(ApiErrorMessage.INFO_NOT_FOUND_MESSAGE.getMessage())
+            );
+        }
+    }
+
+    @GetMapping("${end.point.base-popular-direction-detail}")
+    public ResponseEntity<?> getPopularDirectDetail(@PathVariable("id") Integer id) {
+        try {
+            return ResponseEntity.status(200).body(
+                    baseService.getPopularDirectById(id)
+            );
+        } catch (NoDirectionFoundException e) {
+            return ResponseEntity.status(404).body(
+                    new DetailErrorResponse(
+                            e.getMessage()
+                    )
             );
         }
     }

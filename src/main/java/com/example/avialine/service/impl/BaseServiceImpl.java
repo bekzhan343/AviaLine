@@ -4,7 +4,9 @@ import com.example.avialine.dto.*;
 import com.example.avialine.dto.response.FaqAnswerResponse;
 import com.example.avialine.dto.response.GetFaqResponse;
 import com.example.avialine.dto.response.InfoSubInfoResponse;
-import com.example.avialine.dto.response.PopularDirectsResponse;
+import com.example.avialine.dto.PopularDirectDTO;
+import com.example.avialine.dto.response.PopularDirectDetailResponse;
+import com.example.avialine.exception.NoDirectionFoundException;
 import com.example.avialine.exception.NoStoryMatchesException;
 import com.example.avialine.mapper.DTOMapper;
 import com.example.avialine.messages.ApiErrorMessage;
@@ -150,14 +152,14 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
-    public List<PopularDirectsResponse> getPopularDirects() {
+    public List<PopularDirectDTO> getPopularDirects() {
 
         List<PopularDirectory> pdList = popularDirectoryRepo.findAll();
 
-        List<PopularDirectsResponse> pdResponses = new ArrayList<>();
+        List<PopularDirectDTO> pdResponses = new ArrayList<>();
 
         for (PopularDirectory popularDirectory : pdList) {
-            PopularDirectsResponse directsResponse = dtoMapper.toPopularDirectsResponse(popularDirectory);
+            PopularDirectDTO directsResponse = dtoMapper.toPopularDirectsResponse(popularDirectory);
 
             pdResponses.add(directsResponse);
         }
@@ -199,5 +201,14 @@ public class BaseServiceImpl implements BaseService {
         return subInfo.stream()
                 .map(dtoMapper::toSubInfoDTO)
                 .toList();
+    }
+
+    @Override
+    public PopularDirectDetailResponse getPopularDirectById(Integer id) {
+
+        PopularDirectory popularDirectory = popularDirectoryRepo.findById(id)
+                .orElseThrow(() -> new NoDirectionFoundException(ApiErrorMessage.NO_DIRECTION_FOUND_MESSAGE.getMessage()));
+
+        return dtoMapper.toPopularDirectDetailResponse(popularDirectory);
     }
 }

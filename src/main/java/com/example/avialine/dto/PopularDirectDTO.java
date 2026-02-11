@@ -1,4 +1,4 @@
-package com.example.avialine.dto.response;
+package com.example.avialine.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PopularDirectsResponse implements Serializable {
+public class PopularDirectDTO implements Serializable {
 
     @JsonProperty("id")
     private Integer id;

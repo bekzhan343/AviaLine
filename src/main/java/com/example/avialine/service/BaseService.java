@@ -22,11 +22,13 @@ public interface BaseService {
 
     InfoSubInfoResponse getInfo();
 
-    List<PopularDirectsResponse> getPopularDirects();
+    List<PopularDirectDTO> getPopularDirects();
 
     List<StoryDTO> getStories();
 
     StoryDTO getStoryById(Integer id);
 
     List<SubInfoDTO> getSubInfoBySlug(String slug);
+
+    PopularDirectDetailResponse getPopularDirectById(Integer id);
 }

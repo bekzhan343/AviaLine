@@ -59,6 +59,7 @@ end:
     base-stories: /stories/
     base-story-by-id: /stories/{id}
     base-sub-info: /sub-info/
+    base-popular-direction-detail: /{id}/detail/
 
     user-base: /users
     user-id: /{id}

@@ -3,10 +3,9 @@ package com.example.avialine.mapper;
 import com.example.avialine.dto.*;
 import com.example.avialine.dto.response.FaqAnswerResponse;
 import com.example.avialine.dto.response.GetFaqResponse;
-import com.example.avialine.dto.response.InfoSubInfoResponse;
-import com.example.avialine.dto.response.PopularDirectsResponse;
+import com.example.avialine.dto.PopularDirectDTO;
+import com.example.avialine.dto.response.PopularDirectDetailResponse;
 import com.example.avialine.model.entity.*;
-import com.example.avialine.repo.PopularDirectoryRepo;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -116,8 +115,8 @@ public class DTOMapper {
                 .build();
     }
 
-    public PopularDirectsResponse toPopularDirectsResponse(PopularDirectory popularDirectory){
-        return PopularDirectsResponse
+    public PopularDirectDTO toPopularDirectsResponse(PopularDirectory popularDirectory){
+        return PopularDirectDTO
                 .builder()
                 .id(popularDirectory.getId())
                 .name(popularDirectory.getName())
@@ -140,6 +139,15 @@ public class DTOMapper {
                 .title(story.getTitle())
                 .detailed(story.getDetailed())
                 .description(story.getDescription())
+                .build();
+    }
+
+    public PopularDirectDetailResponse toPopularDirectDetailResponse(PopularDirectory popularDirectory){
+        return PopularDirectDetailResponse
+                .builder()
+                .id(popularDirectory.getId())
+                .description(popularDirectory.getDescription())
+                .image(popularDirectory.getImage())
                 .build();
     }
 
