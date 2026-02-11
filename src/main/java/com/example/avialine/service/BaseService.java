@@ -27,4 +27,6 @@ public interface BaseService {
     List<StoryDTO> getStories();
 
     StoryDTO getStoryById(Integer id);
+
+    List<SubInfoDTO> getSubInfoBySlug(String slug);
 }

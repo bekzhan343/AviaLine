@@ -56,7 +56,8 @@ public class SecurityConfig {
             "/base/info/",
             "/base/popular-directories/",
             "/base/stories/",
-            "/base/stories/{id}"
+            "/base/stories/{id}",
+            "/base/sub-info/"
     };
 
 

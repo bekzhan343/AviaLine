@@ -12,4 +12,6 @@ public interface InfoPageRepo extends JpaRepository<InfoPage, Integer> {
 
     @Query("SELECT i FROM InfoPage i LEFT join FETCH i.subInfos")
     List<InfoPage> findAllWithSubInfos();
+
+    InfoPage findBySlug(String slug);
 }

@@ -188,4 +188,16 @@ public class BaseServiceImpl implements BaseService {
 
         return dtoMapper.toStoryDTO(story);
     }
+
+    @Override
+    public List<SubInfoDTO> getSubInfoBySlug(String slug) {
+
+        InfoPage infoPage = infoPageRepo.findBySlug(slug);
+
+        List<SubInfo> subInfo = infoPage.getSubInfos();
+
+        return subInfo.stream()
+                .map(dtoMapper::toSubInfoDTO)
+                .toList();
+    }
 }

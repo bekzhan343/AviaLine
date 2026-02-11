@@ -58,6 +58,7 @@ end:
     base-popular-directories: /popular-directories/
     base-stories: /stories/
     base-story-by-id: /stories/{id}
+    base-sub-info: /sub-info/
 
     user-base: /users
     user-id: /{id}
