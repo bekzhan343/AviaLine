@@ -39,7 +39,7 @@ spring:
     level:
       root: debug
       org.springframework.web: debug
-      com.AviaLine: trace
+      com.AviaLine: debug
 
 server:
   port: 8160
@@ -60,6 +60,7 @@ end:
     base-story-by-id: /stories/{id}
     base-sub-info: /sub-info/
     base-popular-direction-detail: /{id}/detail/
+    base-services: /services/
 
     user-base: /users
     user-id: /{id}
@@ -84,9 +85,18 @@ end:
     auth-re-send-email: /user/re-send/email
     auth-logout: /user/logout/
     auth-modify-person-info: /user/modify-personal/
+
 keys:
   access-key: yrQidcrJDGVZJ1wPWTSVoyMsZrwnNvTKzEw4vAchjWo=
   refresh-key: RMBb5tiiRxwL+KMXEqfA4zykANDFSxoZeI5ofmEgx+4=
+
+app:
+  admin:
+    name: Isabekov Bekzhan
+    email: spotifyprm135@gmail.com
+    phone: 0 554 515 130
+    password: bekzhan230109
+
 
 jwt:
   access:

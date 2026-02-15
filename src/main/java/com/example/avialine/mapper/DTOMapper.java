@@ -5,6 +5,7 @@ import com.example.avialine.dto.response.FaqAnswerResponse;
 import com.example.avialine.dto.response.GetFaqResponse;
 import com.example.avialine.dto.PopularDirectDTO;
 import com.example.avialine.dto.response.PopularDirectDetailResponse;
+import com.example.avialine.dto.response.SendServiceResponse;
 import com.example.avialine.model.entity.*;
 import org.springframework.stereotype.Component;
 
@@ -148,6 +149,25 @@ public class DTOMapper {
                 .id(popularDirectory.getId())
                 .description(popularDirectory.getDescription())
                 .image(popularDirectory.getImage())
+                .build();
+    }
+
+    public SendServiceResponse toSendServiceResponse(ServiceInfo serviceInfo) {
+        return SendServiceResponse
+                .builder()
+                .id(serviceInfo.getId())
+                .name(serviceInfo.getName())
+                .image(serviceInfo.getImage())
+                .serviceDTO(toServiceDTO(serviceInfo.getService()))
+                .build();
+    }
+
+    public ServiceDTO toServiceDTO(Service service){
+        return ServiceDTO
+                .builder()
+                .id(service.getId())
+                .name(service.getName())
+                .description(service.getDescription())
                 .build();
     }
 

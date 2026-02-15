@@ -58,7 +58,8 @@ public class SecurityConfig {
             "/base/stories/",
             "/base/stories/{id}",
             "/base/sub-info/",
-            "/base/{id}/detail/"
+            "/base/{id}/detail/",
+            "/base/services/"
     };
 
 

@@ -1,11 +1,8 @@
 package com.example.avialine.service.impl;
 
 import com.example.avialine.dto.*;
-import com.example.avialine.dto.response.FaqAnswerResponse;
-import com.example.avialine.dto.response.GetFaqResponse;
-import com.example.avialine.dto.response.InfoSubInfoResponse;
+import com.example.avialine.dto.response.*;
 import com.example.avialine.dto.PopularDirectDTO;
-import com.example.avialine.dto.response.PopularDirectDetailResponse;
 import com.example.avialine.exception.NoDirectionFoundException;
 import com.example.avialine.exception.NoStoryMatchesException;
 import com.example.avialine.mapper.DTOMapper;
@@ -18,8 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @RequiredArgsConstructor
 @Service
@@ -35,6 +34,8 @@ public class BaseServiceImpl implements BaseService {
     private final SubInfoRepo subInfoRepo;
     private final PopularDirectoryRepo popularDirectoryRepo;
     private final StoryRepo storyRepo;
+    private final ServiceInfoRepo serviceInfoRepo;
+    private final ServiceRepo serviceRepo;
 
     @Override
     public List<CountryDTO> getCountries() {
@@ -210,5 +211,31 @@ public class BaseServiceImpl implements BaseService {
                 .orElseThrow(() -> new NoDirectionFoundException(ApiErrorMessage.NO_DIRECTION_FOUND_MESSAGE.getMessage()));
 
         return dtoMapper.toPopularDirectDetailResponse(popularDirectory);
+    }
+
+    @Override
+    public List<SendServiceResponse> getServices() {
+
+        List<ServiceInfo> serviceInfos = serviceInfoRepo.getAllServiceInfoWithService();
+
+        return serviceInfos
+                .stream()
+                .map(dtoMapper::toSendServiceResponse)
+                .toList();
+    }
+
+
+    private String generateRandomStr(){
+        String chars = "QWERTYUIOPLKJHGFDSAZXCVBNMqwertyuioplkjhgfdsazxcvbnm1234567890";
+        SecureRandom random = new SecureRandom();
+        StringBuilder salt = new StringBuilder();
+
+        for (int i = 0; i < 10; i++){
+            int index = random.nextInt(chars.length());
+            salt.append(chars.charAt(index));
+
+        }
+
+        return salt.toString();
     }
 }

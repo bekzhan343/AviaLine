@@ -118,6 +118,13 @@
             <artifactId>slugify</artifactId>
             <version>3.0.7</version>
         </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/commons-validator/commons-validator -->
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.10.1</version>
+        </dependency>
     </dependencies>
 
     <build>

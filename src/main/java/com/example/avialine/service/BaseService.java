@@ -31,4 +31,6 @@ public interface BaseService {
     List<SubInfoDTO> getSubInfoBySlug(String slug);
 
     PopularDirectDetailResponse getPopularDirectById(Integer id);
+
+    List<SendServiceResponse> getServices();
 }

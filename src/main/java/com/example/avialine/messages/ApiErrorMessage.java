@@ -23,6 +23,9 @@ public enum ApiErrorMessage {
     TOKEN_NOT_FOUND_BY_USER_MESSAGE("token not found by id -> %s !"),
 
     INVALID_TOKEN_MESSAGE("invalid token"),
+    EMAIL_REQUIRED_MESSAGE("Email is required"),
+    INVALID_EMAIL_FORMAT_MESSAGE("Invalid email format"),
+    INVALID_PHONE_FORMAT_MESSAGE("Invalid phone format"),
     INVALID_CODE_MESSAGE("invalid code -> %s !"),
     CODE_ALREADY_VERIFIED_MESSAGE("code already verified!"),
 
@@ -39,7 +42,10 @@ public enum ApiErrorMessage {
     INVALID_CREDENTIALS_MESSAGE("Please enter the correct account username and password!"),
     NO_PROVIDED_ACCOUNT_MESSAGE("no accounts provided!"),
     NO_STORY_MATCHES_MESSAGE("No story matches by given id!"),
-    NO_DIRECTION_FOUND_MESSAGE("no direction found!");
+    NO_DIRECTION_FOUND_MESSAGE("no direction found!"),
+
+    PASSWORD_CANNOT_BE_EMPTY_MESSAGE("Password cannot be empty!"),
+    INVALID_PASSWORD_FORMAT_MESSAGE("invalid password format!");
 
     private final String message;
 

@@ -102,4 +102,9 @@ public class BaseController {
             );
         }
     }
+
+    @GetMapping("${end.point.base-services}")
+    private ResponseEntity<List<SendServiceResponse>> getServices(){
+        return ResponseEntity.status(200).body(baseService.getServices());
+    }
 }

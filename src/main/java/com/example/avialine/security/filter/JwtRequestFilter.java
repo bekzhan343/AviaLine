@@ -45,7 +45,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 uri.matches("/base/info/") ||
                 uri.matches("/base/popular-directories/") ||
                 uri.matches("/base/stories/") ||
-                uri.matches("/base/sub-info/");
+                uri.matches("/base/sub-info/") ||
+                uri.matches("/base/services/");
 
         log.info("=== JWT Filter Check === Method: {}, URI: {}, Skip: {}", method, uri, skip);
 
