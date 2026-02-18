@@ -171,5 +171,30 @@ public class DTOMapper {
                 .build();
     }
 
+    public AirportDTO toAirportDTO(Airport airport){
+        return AirportDTO
+                .builder()
+                .id(airport.getId())
+                .name(airport.getName())
+                .codeName(airport.getCode())
+                .build();
+    }
 
+    public CityDTO toCityDTO(Airport airport){
+        return CityDTO
+                .builder()
+                .id(airport.getId())
+                .name(airport.getCity().getName())
+                .codeName(airport.getCode())
+                .build();
+    }
+
+    public PrivacyPoliceDTO toPrivacyPoliceDTO(PrivacyPolice privacyPolice){
+        return PrivacyPoliceDTO
+                .builder()
+                .id(privacyPolice.getId())
+                .title(privacyPolice.getTitle())
+                .file(privacyPolice.getFile())
+                .build();
+    }
 }

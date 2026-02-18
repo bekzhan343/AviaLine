@@ -47,6 +47,10 @@ server:
 end:
   point:
 
+    avia-base: /avia
+    avia-search-params: /search-params/
+    avia-privacy-policy: /privacy-policy
+
     base: /base
     base-countries: /api/countries/
     base-docs: /api/docs/

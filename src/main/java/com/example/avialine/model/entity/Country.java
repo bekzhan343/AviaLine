@@ -27,6 +27,9 @@ public class Country {
     @Column(name = "name", length = 100, unique = true, nullable = false)
     private String name;
 
+    @Column(name = "image", length = 500)
+    private String image;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "docs_avail_country",
@@ -35,6 +38,8 @@ public class Country {
     )
     private Set<Doc> docs;
 
+
+
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL)
-    private List<Airport> airports;
+    private Set<City> cities;
 }

@@ -32,6 +32,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 uri.startsWith("/swagger-ui") ||
                 uri.startsWith("/api-docs") ||
                 uri.startsWith("/base/faq/") ||
+                        uri.startsWith("/avia") ||
                 uri.matches("/auth/user/register") ||
                 uri.matches("/auth/user/login") ||
                 uri.matches("/auth/user/confirm-code") ||
@@ -46,8 +47,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 uri.matches("/base/popular-directories/") ||
                 uri.matches("/base/stories/") ||
                 uri.matches("/base/sub-info/") ||
-                uri.matches("/base/services/");
-
+                uri.matches("/base/services/") ||
+                uri.matches("/avia/search-params/") ||
+                uri.matches("/avia/privacy-policy");
         log.info("=== JWT Filter Check === Method: {}, URI: {}, Skip: {}", method, uri, skip);
 
         return skip;

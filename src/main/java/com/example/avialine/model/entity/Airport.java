@@ -27,15 +27,12 @@ public class Airport {
     @Column(name = "code", nullable = false, length = 3, unique = true)
     private String code;
 
-    @Column(name = "city", length = 100, nullable = false)
-    private String city;
-
     @ManyToOne
     @JoinColumn(
-            name = "country_id",
+            name = "city_id",
             nullable = false
     )
-    private Country country;
+    private City city;
 
     @Column(name = "timezone", length = 50)
     private String timezone;
@@ -60,3 +57,5 @@ public class Airport {
     @OneToMany(mappedBy = "airportFrom")
     private List<PopularDirectory> arrivals;
 }
+
+

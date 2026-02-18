@@ -59,7 +59,10 @@ public class SecurityConfig {
             "/base/stories/{id}",
             "/base/sub-info/",
             "/base/{id}/detail/",
-            "/base/services/"
+            "/base/services/",
+            "/avia",
+            "/avia/search-params/",
+            "/avia/privacy-policy"
     };
 
 
