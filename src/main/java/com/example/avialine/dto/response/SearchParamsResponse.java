@@ -1,7 +1,6 @@
 package com.example.avialine.dto.response;
 
 import com.example.avialine.dto.CityDTO;
-import com.example.avialine.model.entity.Airport;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;

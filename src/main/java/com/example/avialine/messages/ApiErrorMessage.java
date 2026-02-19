@@ -45,7 +45,8 @@ public enum ApiErrorMessage {
     NO_DIRECTION_FOUND_MESSAGE("no direction found!"),
 
     PASSWORD_CANNOT_BE_EMPTY_MESSAGE("Password cannot be empty!"),
-    INVALID_PASSWORD_FORMAT_MESSAGE("invalid password format!");
+    INVALID_PASSWORD_FORMAT_MESSAGE("invalid password format!"),
+    DECOMPRESS_ERROR_MESSAGE("decompression error!");
 
     private final String message;
 

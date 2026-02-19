@@ -6,13 +6,13 @@ import com.example.avialine.dto.PrivacyPoliceDTO;
 import com.example.avialine.dto.response.SearchParamsResponse;
 import com.example.avialine.mapper.DTOMapper;
 import com.example.avialine.model.entity.Country;
-import com.example.avialine.model.entity.PrivacyPolice;
 import com.example.avialine.repo.CountryRepo;
 import com.example.avialine.repo.PrivacyPoliceRepo;
 import com.example.avialine.service.AviaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -73,5 +73,19 @@ public class AviaServiceImpl implements AviaService {
                 .stream()
                 .map(dtoMapper::toPrivacyPoliceDTO)
                 .toList();
+    }
+
+    @Override
+    public String billPoints() {
+        int random = 100000 + new Random().nextInt(90000);
+
+        return String.valueOf(random);
+    }
+
+    @Override
+    public String billStatic() {
+        int num = 354646;
+
+        return String.valueOf(num);
     }
 }

@@ -30,4 +30,18 @@ public class AviaController {
                 aviaService.getAllPrivacyPolices()
         );
     }
+
+    @GetMapping("${end.point.avia-sirena-bill-points}")
+    public ResponseEntity<String> billPoints(){
+        return ResponseEntity.status(200).body(
+                aviaService.billPoints()
+        );
+    }
+
+    @GetMapping("${end.point.avia-sirena-bill-static}")
+    public ResponseEntity<String> billStatic(){
+        return ResponseEntity.status(200).body(
+                aviaService.billPoints()
+        );
+    }
 }

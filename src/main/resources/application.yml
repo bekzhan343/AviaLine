@@ -50,6 +50,8 @@ end:
     avia-base: /avia
     avia-search-params: /search-params/
     avia-privacy-policy: /privacy-policy
+    avia-sirena-bill-points: /sirena/bill-points/
+    avia-sirena-bill-static: /sirena/bill-static/
 
     base: /base
     base-countries: /api/countries/
@@ -117,3 +119,10 @@ springdoc:
 
   api-docs:
     path: /api-docs
+
+sirena:
+  host: 193.104.87.251
+  port: 34323
+  timeout: 10
+  msg-id: 12345
+  cid: 5149

@@ -11,5 +11,8 @@ public interface AviaService {
     Set<SearchParamsResponse> getCountryDetail();
 
     List<PrivacyPoliceDTO> getAllPrivacyPolices();
+
+    String billPoints();
+    String billStatic();
 }
 
