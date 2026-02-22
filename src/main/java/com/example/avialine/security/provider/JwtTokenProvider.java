@@ -3,7 +3,7 @@ package com.example.avialine.security.provider;
 
 import com.example.avialine.exception.InvalidTokenException;
 import com.example.avialine.exception.TokenExpiredException;
-import com.example.avialine.messages.ApiErrorMessage;
+import com.example.avialine.enums.ApiErrorMessage;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

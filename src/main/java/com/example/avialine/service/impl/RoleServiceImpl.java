@@ -5,7 +5,7 @@ import com.example.avialine.exception.RoleAlreadyExistsException;
 import com.example.avialine.exception.RoleNotFoundException;
 import com.example.avialine.mapper.DTOMapper;
 import com.example.avialine.mapper.EntityMapper;
-import com.example.avialine.messages.ApiErrorMessage;
+import com.example.avialine.enums.ApiErrorMessage;
 import com.example.avialine.model.entity.Role;
 import com.example.avialine.repo.RoleRepo;
 import com.example.avialine.service.RoleService;

@@ -1,7 +1,7 @@
 package com.example.avialine.security.util;
 
 import com.example.avialine.dto.response.DetailErrorResponse;
-import com.example.avialine.messages.ApiErrorMessage;
+import com.example.avialine.enums.ApiErrorMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

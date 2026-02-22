@@ -4,7 +4,7 @@ import com.example.avialine.dto.*;
 import com.example.avialine.dto.response.*;
 import com.example.avialine.exception.NoDirectionFoundException;
 import com.example.avialine.exception.NoStoryMatchesException;
-import com.example.avialine.messages.ApiErrorMessage;
+import com.example.avialine.enums.ApiErrorMessage;
 import com.example.avialine.service.BaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

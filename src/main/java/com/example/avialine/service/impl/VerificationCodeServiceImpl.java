@@ -4,7 +4,7 @@ package com.example.avialine.service.impl;
 import com.example.avialine.exception.CodeAlreadyVerifiedException;
 import com.example.avialine.exception.InvalidCredentialsException;
 import com.example.avialine.exception.InvalidVerificationCodeException;
-import com.example.avialine.messages.ApiErrorMessage;
+import com.example.avialine.enums.ApiErrorMessage;
 import com.example.avialine.model.entity.User;
 import com.example.avialine.model.entity.VerificationCode;
 import com.example.avialine.repo.UserRepo;
@@ -102,7 +102,7 @@ public class VerificationCodeServiceImpl  implements VerificationCodeService {
                 .orElseThrow(
                         () -> new InvalidCredentialsException(
                                 ApiErrorMessage
-                                        .INVALID_CODE_MESSAGE.getMessage())
+                                        .USER_NOT_FOUND_BY_EMAIL_MESSAGE.getMessage(email))
 
                 );
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -25,6 +26,7 @@ public class RegisterRequest {
     @Email(message = "Invalid email format!")
     @JsonProperty("email")
     @Size(max = 254, message = "Email must be at most 254 chars!")
+    @NotBlank(message = "email cannot be empty!")
     private String email;
 
 
@@ -48,6 +50,9 @@ public class RegisterRequest {
     @NotBlank(message = "phone cannot be empty!")
     @JsonProperty("phone")
     @Size(min = 1, message = "phone must be at least 1 char!")
+    @Pattern(regexp = "^\\+996\\d{9}$",
+            message = "Invalid phone number! Format: +996XXXXXXXXX"
+    )
     private String phone;
 
     @Schema(

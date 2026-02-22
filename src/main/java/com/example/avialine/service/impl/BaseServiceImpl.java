@@ -6,7 +6,7 @@ import com.example.avialine.dto.PopularDirectDTO;
 import com.example.avialine.exception.NoDirectionFoundException;
 import com.example.avialine.exception.NoStoryMatchesException;
 import com.example.avialine.mapper.DTOMapper;
-import com.example.avialine.messages.ApiErrorMessage;
+import com.example.avialine.enums.ApiErrorMessage;
 import com.example.avialine.model.entity.*;
 import com.example.avialine.repo.*;
 import com.example.avialine.service.BaseService;

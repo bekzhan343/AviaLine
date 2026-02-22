@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -14,10 +15,6 @@ import java.util.Optional;
 public interface UserRepo extends JpaRepository<User, Integer> {
 
     Optional<User> findById(Integer id);
-
-    boolean existsByName(@NotNull String name);
-
-    boolean existsByEmail(@NotNull String email);
 
     Optional<User> findUserByPhone(@NotNull String phone);
 
@@ -42,9 +39,7 @@ public interface UserRepo extends JpaRepository<User, Integer> {
     """)
     Optional<User> findActiveUserByPhone(String phone);
 
-    boolean existsByEmailAndDeletedFalse(@NotNull String email);
-
-    boolean existsByPhoneAndDeletedFalse(@NotNull String phone);
+    boolean existsByPhoneAndDeletedFalseAndEnabledTrue(@NotNull String phone);
 
     boolean existsByEmailAndEnabledTrueAndDeletedFalse(@NotNull String email);
 

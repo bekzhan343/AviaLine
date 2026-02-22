@@ -1,4 +1,4 @@
-package com.example.avialine.messages;
+package com.example.avialine.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

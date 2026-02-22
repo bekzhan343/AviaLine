@@ -3,18 +3,22 @@ package com.example.avialine.controller.advice;
 import com.example.avialine.dto.response.DefaultResponse;
 import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.GlobalErrorResponse;
+import com.example.avialine.enums.PaxCode;
 import com.example.avialine.exception.*;
-import com.example.avialine.messages.ApiErrorMessage;
+import com.example.avialine.enums.ApiErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import tools.jackson.databind.exc.InvalidFormatException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RestControllerAdvice
@@ -159,6 +163,31 @@ public class ControllerAdvice {
                 new DetailErrorResponse(
                         ApiErrorMessage.FAQ_NOT_FOUND_MESSAGE.getMessage()
                 )
+        );
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<DetailErrorResponse> errorHttpMessageNotReadableException(HttpMessageNotReadableException e){
+        Throwable cause = e.getCause();
+
+        if (cause instanceof InvalidFormatException invalidFormat) {
+            if (invalidFormat.getTargetType().isEnum()) {
+                String validValue = Arrays.stream(invalidFormat.getTargetType().getEnumConstants())
+                        .map(Object::toString)
+                        .collect(Collectors.joining(", "));
+             return ResponseEntity.status(400).body(
+                     new DetailErrorResponse(
+                             ApiErrorMessage.INCORRECT_ENUM_FORMAT_MESSAGE.getMessage(validValue))
+                     );
+
+            }
+
+            return ResponseEntity.status(400).body(
+                    new DetailErrorResponse(ApiErrorMessage.INVALID_FORMAT_FIELD.getMessage(invalidFormat.getValue()))
+            );
+        }
+        return ResponseEntity.status(400).body(
+                new DetailErrorResponse(ApiErrorMessage.INVALID_REQUEST_FORMAT_MESSAGE.getMessage())
         );
     }
 }

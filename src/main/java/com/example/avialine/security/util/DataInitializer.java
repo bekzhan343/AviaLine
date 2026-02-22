@@ -1,6 +1,6 @@
 package com.example.avialine.security.util;
 
-import com.example.avialine.messages.ApiErrorMessage;
+import com.example.avialine.enums.ApiErrorMessage;
 import com.example.avialine.model.entity.Role;
 import com.example.avialine.model.entity.User;
 import com.example.avialine.repo.RoleRepo;

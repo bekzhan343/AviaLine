@@ -42,7 +42,7 @@ spring:
       com.AviaLine: debug
 
 server:
-  port: 8160
+  port: 8167
 
 end:
   point:
@@ -52,6 +52,7 @@ end:
     avia-privacy-policy: /privacy-policy
     avia-sirena-bill-points: /sirena/bill-points/
     avia-sirena-bill-static: /sirena/bill-static/
+    avia-search-ticket: /search-ticket/
 
     base: /base
     base-countries: /api/countries/
@@ -119,10 +120,3 @@ springdoc:
 
   api-docs:
     path: /api-docs
-
-sirena:
-  host: 193.104.87.251
-  port: 34323
-  timeout: 10
-  msg-id: 12345
-  cid: 5149

@@ -4,7 +4,7 @@ import com.example.avialine.dto.request.*;
 import com.example.avialine.dto.UserProfileDTO;
 import com.example.avialine.dto.response.*;
 import com.example.avialine.exception.*;
-import com.example.avialine.messages.ApiErrorMessage;
+import com.example.avialine.enums.ApiErrorMessage;
 import com.example.avialine.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

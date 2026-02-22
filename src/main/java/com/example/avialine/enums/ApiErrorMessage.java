@@ -1,4 +1,4 @@
-package com.example.avialine.messages;
+package com.example.avialine.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,7 +46,16 @@ public enum ApiErrorMessage {
 
     PASSWORD_CANNOT_BE_EMPTY_MESSAGE("Password cannot be empty!"),
     INVALID_PASSWORD_FORMAT_MESSAGE("invalid password format!"),
-    DECOMPRESS_ERROR_MESSAGE("decompression error!");
+    DECOMPRESS_ERROR_MESSAGE("decompression error!"),
+    INVALID_PASSENGER_AGE_MESSAGE("invalid passenger age %S !"),
+    TARIFF_NOT_FOUND_MESSAGE("tariff not found!"),
+
+    INVALID_FORMAT_FIELD("Неверный формат поля: %S "),
+    INCORRECT_ENUM_FORMAT_MESSAGE("incorrect enum format, acceptable vales: %s "),
+    INVALID_REQUEST_FORMAT_MESSAGE("invalid request format!"),
+    DATE_IN_PAST_MESSAGE("Flight departure date cannot be in the past"),
+
+    VERIFICATION_CODE_SENT_MESSAGE("verification code sent to user %s!");
 
     private final String message;
 

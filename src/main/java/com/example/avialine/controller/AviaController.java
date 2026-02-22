@@ -1,13 +1,15 @@
 package com.example.avialine.controller;
 
 import com.example.avialine.dto.PrivacyPoliceDTO;
+import com.example.avialine.dto.request.SearchTicketRequest;
+import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.SearchParamsResponse;
+import com.example.avialine.dto.response.SearchTicketResponse;
+import com.example.avialine.exception.PastDateException;
 import com.example.avialine.service.AviaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
@@ -41,7 +43,21 @@ public class AviaController {
     @GetMapping("${end.point.avia-sirena-bill-static}")
     public ResponseEntity<String> billStatic(){
         return ResponseEntity.status(200).body(
-                aviaService.billPoints()
+                aviaService.billStatic()
         );
+    }
+
+    @PostMapping("${end.point.avia-search-ticket}")
+    public ResponseEntity<?> getSearchTicket(@RequestBody SearchTicketRequest searchTicketRequest){
+        try {
+            return ResponseEntity.status(200).body(
+                    aviaService.searchTicket(searchTicketRequest));
+        }catch (IllegalArgumentException | PastDateException e){
+            return ResponseEntity.status(400).body(
+                    new DetailErrorResponse(
+                            e.getMessage()
+                    )
+            );
+        }
     }
 }

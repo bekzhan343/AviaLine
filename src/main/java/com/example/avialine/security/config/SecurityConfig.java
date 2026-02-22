@@ -64,7 +64,8 @@ public class SecurityConfig {
             "/avia/search-params/",
             "/avia/privacy-policy",
             "/avia/sirena/bill-points/",
-            "/avia/sirena/bill-static/"
+            "/avia/sirena/bill-static/",
+            "/avia/search-ticket/"
     };
 
 

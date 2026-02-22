@@ -1,7 +1,10 @@
 package com.example.avialine.service;
 
 import com.example.avialine.dto.PrivacyPoliceDTO;
+import com.example.avialine.dto.request.SearchTicketRequest;
 import com.example.avialine.dto.response.SearchParamsResponse;
+import com.example.avialine.dto.response.SearchTicketResponse;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Set;
@@ -14,5 +17,7 @@ public interface AviaService {
 
     String billPoints();
     String billStatic();
+
+    SearchTicketResponse searchTicket(@NotNull SearchTicketRequest request);
 }
 

@@ -7,8 +7,8 @@ import com.example.avialine.dto.response.DefaultResponse;
 import com.example.avialine.dto.response.PersonInfoResponse;
 import com.example.avialine.exception.*;
 import com.example.avialine.mapper.DTOMapper;
-import com.example.avialine.messages.ApiErrorMessage;
-import com.example.avialine.messages.ApiMessage;
+import com.example.avialine.enums.ApiErrorMessage;
+import com.example.avialine.enums.ApiMessage;
 import com.example.avialine.model.entity.RefreshToken;
 import com.example.avialine.model.entity.User;
 import com.example.avialine.repo.RefreshTokenRepo;
@@ -93,16 +93,23 @@ public class AuthServiceImpl implements AuthService {
     public DefaultResponse register(@NotNull RegisterRequest registerRequest) {
 
         Map<String, List<String>> errors = new HashMap<>();
+
         String email = registerRequest.getEmail();
+        String phone = registerRequest.getPhone();
 
+        Optional<User> existingUser = userRepo.findByEmailAndDeletedFalse(email);
 
-        if (userRepo.existsByEmailAndDeletedFalse(email)) {
+        if (existingUser.isPresent()){
+            if (!existingUser.get().isEnabled()){
+                emailService.sendVerificationCode(email);
+                return new DefaultResponse(true, ApiMessage.VERIFICATION_CODE_SENT_MESSAGE.getMessage());
+            }
             errors.put("email", List.of(ApiErrorMessage.USER_ALREADY_EXISTS_MESSAGE.getMessage(email)));
         }
-        if (userRepo.existsByPhoneAndDeletedFalse(registerRequest.getPhone())){
+        if (userRepo.existsByPhoneAndDeletedFalseAndEnabledTrue(phone)) {
             errors.put("phone", List.of(ApiErrorMessage.PHONE_NUMBER_IS_UNAVAILABLE_MESSAGE.getMessage()));
         }
-        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())){
+        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
             errors.put("password", List.of(ApiErrorMessage.PASSWORD_DO_NOT_MATCH_MESSAGE.getMessage()));
         }
 
@@ -123,10 +130,11 @@ public class AuthServiceImpl implements AuthService {
     public ConfirmCodeResponse confirmVerificationCode(@NotNull ConfirmCodeRequest request) {
 
             boolean isVerified = emailService.verifyCode(request.getEmail(), request.getCode());
-            User user = userService.getActiveUserByEmail(request.getEmail());
             if (!isVerified) {
                 throw new InvalidVerificationCodeException(ApiErrorMessage.CODE_ALREADY_VERIFIED_MESSAGE.getMessage());
             }
+
+            User user = userService.getActiveUserByEmail(request.getEmail());
 
             Authentication auth = new UsernamePasswordAuthenticationToken(
                     user.getPhone(),

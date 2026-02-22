@@ -1,7 +1,7 @@
 package com.example.avialine.security.util;
 
 import com.example.avialine.exception.UnauthorizedException;
-import com.example.avialine.messages.ApiErrorMessage;
+import com.example.avialine.enums.ApiErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
