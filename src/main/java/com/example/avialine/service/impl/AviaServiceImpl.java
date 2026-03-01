@@ -3,30 +3,35 @@ package com.example.avialine.service.impl;
 import com.example.avialine.dto.AirportDTO;
 import com.example.avialine.dto.CityDTO;
 import com.example.avialine.dto.PrivacyPoliceDTO;
+import com.example.avialine.dto.request.BookingRequest;
+import com.example.avialine.dto.request.DepArrRequest;
 import com.example.avialine.dto.request.SearchTicketRequest;
+import com.example.avialine.dto.response.PNRResponse;
+import com.example.avialine.dto.response.ScheduleResponse;
 import com.example.avialine.dto.response.SearchParamsResponse;
 import com.example.avialine.dto.response.SearchTicketResponse;
-import com.example.avialine.enums.ApiErrorMessage;
-import com.example.avialine.enums.PaxCode;
-import com.example.avialine.exception.PastDateException;
+import com.example.avialine.enums.*;
+import com.example.avialine.enums.Currency;
+import com.example.avialine.exception.*;
 import com.example.avialine.mapper.DTOMapper;
-import com.example.avialine.model.entity.Country;
-import com.example.avialine.model.entity.Flight;
-import com.example.avialine.model.entity.FlightSchedule;
-import com.example.avialine.model.entity.Tariff;
+import com.example.avialine.model.entity.*;
 import com.example.avialine.repo.*;
-import com.example.avialine.service.AviaService;
+import com.example.avialine.security.util.SecurityUtil;
+import com.example.avialine.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AviaServiceImpl implements AviaService {
@@ -36,7 +41,17 @@ public class AviaServiceImpl implements AviaService {
     private final DTOMapper dtoMapper;
     private final FlightScheduleRepo flightScheduleRepo;
     private final TariffRepo tariffRepo;
-
+    private final String company = "AT";
+    private final CityRepo cityRepo;
+    private final BookingRepo bookingRepo;
+    private final BookingSegmentRepo bookingSegmentRepo;
+    private final AirportRepo airportRepo;
+    private final FlightRepo flightRepo;
+    private final UserService userService;
+    private final PassengerRepo passengerRepo;
+    private final BookingSegmentService bookingSegmentService;
+    private final BookingService bookingService;
+    private final PassengerService passengerService;
 
     @Override
     public Set<SearchParamsResponse> getCountryDetail() {
@@ -101,12 +116,86 @@ public class AviaServiceImpl implements AviaService {
         return String.valueOf(num);
     }
 
+
+    @Override
+    public ScheduleResponse getSchedule(DepArrRequest request) {
+
+        List<FlightSchedule> schedule = flightScheduleRepo.findUpcomingFlights(request.getDeparture(), request.getArrival());
+
+        List<ScheduleResponse.Result> results = new ArrayList<>();
+
+
+            for (FlightSchedule fs : schedule) {
+
+
+                ScheduleResponse.Result result = ScheduleResponse
+                        .Result
+                        .builder()
+                        .company(company)
+                        .num(fs.getFlight().getFlightNumber())
+                        .operatingCompany(null)
+                        .operatingFlight(null)
+                        .origin(fs.getFlight().getDepartureCode())
+                        .destination(fs.getFlight().getArrivalCode())
+                        .departureTime(fs.getFlight().getDepartureTime().toString())
+                        .arrivalTime(fs.getFlight().getArrivalTime().toString())
+                        .flightTime(convertTime(fs.getFlight().getFlightMinutes()))
+                        .airplane(fs.getFlight().getAirplane())
+                        .serviceType(fs.getFlight().getServiceType())
+                        .origTerm(fs.getFlight().getOriginTerminal())
+                        .destTerm(fs.getFlight().getDestinationTerminal())
+                        .originType("airport")
+                        .originCity(cityRepo.findCityByCode(fs.getFlight().getDepartureCode()).getName())
+                        .destinationType("airport")
+                        .destinationCity(cityRepo.findCityByCode(fs.getFlight().getArrivalCode()).getName())
+                        .classes(
+                                ScheduleResponse
+                                        .Class
+                                        .builder()
+                                        .first(fs.getAvailFirst())
+                                        .econom(fs.getAvailEconom())
+                                        .business(fs.getAvailBusiness())
+                                        .build())
+                        .build();
+
+                results.add(result);
+            }
+
+        return ScheduleResponse.builder()
+                .count(results.size())
+                .nextPagePath("")
+                .previousPagePath("")
+                .current(1)
+                .results(results)
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public PNRResponse booking(BookingRequest request) {
+
+        Authentication auth = SecurityUtil.requireAuthentication();
+        User user = userService.getActiveUserByPhone(auth.getName());
+
+        Booking booking = bookingService.createBooking(request, user);
+
+        List<BookingSegment> bookingSegments = bookingSegmentService.createBookingSegments(booking, request.getSegments());
+        booking.setBookingSegments(bookingSegments);
+
+        List<Passenger> passengers = passengerService.createPassenger(booking, request, bookingSegments);
+        booking.setPassengers(passengers);
+
+        bookingRepo.save(booking);
+
+        return new PNRResponse(booking.getPnrNumber(), booking.getStatus().toString());
+    }
+
     @Override
     public SearchTicketResponse searchTicket(SearchTicketRequest request) {
 
         List<SearchTicketResponse.Variant> variants = new ArrayList<>();
 
-        SearchTicketRequest.Segments segment = request.getSegments().getFirst();
+        SearchTicketRequest.SearchSegment segment = request.getSegments().getFirst();
 
         if (segment.getDate().isBefore(LocalDate.now())){
             throw new PastDateException(ApiErrorMessage.DATE_IN_PAST_MESSAGE.getMessage());
@@ -215,4 +304,5 @@ public class AviaServiceImpl implements AviaService {
 
         return String.format("%02d:%02d", hours, minute);
     }
+
 }

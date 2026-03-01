@@ -60,12 +60,12 @@ public class SecurityConfig {
             "/base/sub-info/",
             "/base/{id}/detail/",
             "/base/services/",
-            "/avia",
             "/avia/search-params/",
             "/avia/privacy-policy",
             "/avia/sirena/bill-points/",
             "/avia/sirena/bill-static/",
-            "/avia/search-ticket/"
+            "/avia/search-ticket/",
+            "/avia/schedule/"
     };
 
 

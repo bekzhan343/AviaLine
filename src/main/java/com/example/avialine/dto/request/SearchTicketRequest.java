@@ -21,7 +21,7 @@ import java.util.List;
 @Builder
 public class SearchTicketRequest implements Serializable {
 
-    private List<Segments> segments;
+    private List<SearchSegment> segments;
 
     private List<Passenger> passengers;
 
@@ -35,7 +35,7 @@ public class SearchTicketRequest implements Serializable {
     @NoArgsConstructor
     @Data
     @Builder
-    public static class Segments implements Serializable{
+    public static class SearchSegment implements Serializable{
 
         @Schema(example = "BSZ")
         @Length(min = 3, max = 3)

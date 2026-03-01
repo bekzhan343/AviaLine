@@ -1,12 +1,15 @@
 package com.example.avialine.controller;
 
 import com.example.avialine.dto.PrivacyPoliceDTO;
+import com.example.avialine.dto.request.BookingRequest;
+import com.example.avialine.dto.request.DepArrRequest;
 import com.example.avialine.dto.request.SearchTicketRequest;
 import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.SearchParamsResponse;
-import com.example.avialine.dto.response.SearchTicketResponse;
+import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.exception.PastDateException;
 import com.example.avialine.service.AviaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +60,26 @@ public class AviaController {
                     new DetailErrorResponse(
                             e.getMessage()
                     )
+            );
+        }
+    }
+
+    @PostMapping("${end.point.avia-schedule}")
+    public ResponseEntity<?> getSchedule(@RequestBody DepArrRequest request){
+        return ResponseEntity.status(200).body(
+                aviaService.getSchedule(request)
+        );
+    }
+
+    @PostMapping("${end.point.avia-booking}")
+    public  ResponseEntity<?> getBooking(@Valid @RequestBody BookingRequest request){
+        try {
+            return ResponseEntity.status(200).body(
+                    aviaService.booking(request)
+            );
+        }catch (DataNotFoundException e){
+            return ResponseEntity.status(400).body(
+                    new DetailErrorResponse(e.getMessage())
             );
         }
     }

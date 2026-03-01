@@ -51,7 +51,7 @@ public class RegisterRequest {
     @JsonProperty("phone")
     @Size(min = 1, message = "phone must be at least 1 char!")
     @Pattern(regexp = "^\\+996\\d{9}$",
-            message = "Invalid phone number! Format: +996XXXXXXXXX"
+            message = "Invalid phone number! Expected format: +996XXXXXXXXX"
     )
     private String phone;
 

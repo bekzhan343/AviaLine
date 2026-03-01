@@ -47,7 +47,14 @@ public class Flight {
     @Column(name = "bag_norm_kg")
     private Integer bagNormKg;
 
+    @Column(name = "service_type", length = 2)
+    private String serviceType;
 
+    @Column(name = "origin_terminal", length = 10)
+    private String originTerminal;
+
+    @Column(name = "destination_terminal", length = 10)
+    private String destinationTerminal;
 
 
 

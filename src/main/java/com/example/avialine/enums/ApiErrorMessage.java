@@ -9,6 +9,7 @@ public enum ApiErrorMessage {
     USER_NOT_FOUND_MESSAGE("user not found by id -> %s !"),
     USER_NOT_FOUND_BY_EMAIL_MESSAGE("user not found by email -> %s !"),
     USER_NOT_FOUND_BY_PHONE_MESSAGE("user not found by phone -> %s !"),
+    CARRIER_NOT_FOUND_MESSAGE("carrier not found by -> %s "),
     UNAUTHORIZED_MESSAGE("user is not authenticated!"),
     USER_ALREADY_EXISTS_MESSAGE("user already exists by email -> %s !"),
     USER_NOT_ENABLED_MESSAGE("user is not enabled!"),
@@ -55,7 +56,16 @@ public enum ApiErrorMessage {
     INVALID_REQUEST_FORMAT_MESSAGE("invalid request format!"),
     DATE_IN_PAST_MESSAGE("Flight departure date cannot be in the past"),
 
-    VERIFICATION_CODE_SENT_MESSAGE("verification code sent to user %s!");
+    VERIFICATION_CODE_SENT_MESSAGE("verification code sent to user %s!"),
+    PAST_DATE_EXCEPTION_MESSAGE("Date cannot be in the past!"),
+    NO_SUITABLE_FLIGHT_FOUND_MESSAGE("no suitable flights found!"),
+
+    INF_AGE_ERROR_MESSAGE("INF passenger must be under 2 years old"),
+    CHD_AGE_ERROR_MESSAGE("CHD passenger must be between 2 and 12 years old"),
+    ADT_AGE_ERROR_MESSAGE("ADT passenger must be 12 or older"),
+    PSP_EXPIRE_ERROR_MESSAGE("Passport expiry date must be at least 6 months after the flight date"),
+    FAILED_TO_GENERATE_PNR_MESSAGE("Failed to generate unique PNR"),
+    INVALID_INF_ADT_COMBINATION_MESSAGE("Each INF must be accompanied by an ADT");
 
     private final String message;
 

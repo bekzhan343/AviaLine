@@ -3,7 +3,6 @@ package com.example.avialine.controller.advice;
 import com.example.avialine.dto.response.DefaultResponse;
 import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.GlobalErrorResponse;
-import com.example.avialine.enums.PaxCode;
 import com.example.avialine.exception.*;
 import com.example.avialine.enums.ApiErrorMessage;
 import org.springframework.http.HttpStatus;

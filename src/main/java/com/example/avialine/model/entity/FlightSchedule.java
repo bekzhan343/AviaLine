@@ -1,10 +1,8 @@
 package com.example.avialine.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDate;
 
@@ -32,4 +30,14 @@ public class FlightSchedule {
 
     @Column(name = "direct")
     private Boolean direct;
+
+    @Column(name = "avail_econom")
+    private Boolean availEconom;
+
+    @Column(name = "avail_Business")
+    private Boolean availBusiness;
+
+    @Column(name = "avail_first")
+    private Boolean availFirst;
+
 }
