@@ -55,6 +55,7 @@ end:
     avia-search-ticket: /search-ticket/
     avia-schedule: /schedule/
     avia-booking: /booking/
+    avia-booking-detail: /booking-detail/
 
     base: /base
     base-countries: /api/countries/

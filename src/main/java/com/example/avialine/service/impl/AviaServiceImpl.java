@@ -5,13 +5,10 @@ import com.example.avialine.dto.CityDTO;
 import com.example.avialine.dto.PrivacyPoliceDTO;
 import com.example.avialine.dto.request.BookingRequest;
 import com.example.avialine.dto.request.DepArrRequest;
+import com.example.avialine.dto.request.RegnumSurnameRequest;
 import com.example.avialine.dto.request.SearchTicketRequest;
-import com.example.avialine.dto.response.PNRResponse;
-import com.example.avialine.dto.response.ScheduleResponse;
-import com.example.avialine.dto.response.SearchParamsResponse;
-import com.example.avialine.dto.response.SearchTicketResponse;
+import com.example.avialine.dto.response.*;
 import com.example.avialine.enums.*;
-import com.example.avialine.enums.Currency;
 import com.example.avialine.exception.*;
 import com.example.avialine.mapper.DTOMapper;
 import com.example.avialine.model.entity.*;
@@ -25,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,14 +37,10 @@ public class AviaServiceImpl implements AviaService {
     private final DTOMapper dtoMapper;
     private final FlightScheduleRepo flightScheduleRepo;
     private final TariffRepo tariffRepo;
-    private final String company = "AT";
+    private static final String company = "AT";
     private final CityRepo cityRepo;
     private final BookingRepo bookingRepo;
-    private final BookingSegmentRepo bookingSegmentRepo;
-    private final AirportRepo airportRepo;
-    private final FlightRepo flightRepo;
     private final UserService userService;
-    private final PassengerRepo passengerRepo;
     private final BookingSegmentService bookingSegmentService;
     private final BookingService bookingService;
     private final PassengerService passengerService;
@@ -188,6 +180,38 @@ public class AviaServiceImpl implements AviaService {
         bookingRepo.save(booking);
 
         return new PNRResponse(booking.getPnrNumber(), booking.getStatus().toString());
+    }
+
+    @Override
+    public BookingInfoResponse detailBooking(RegnumSurnameRequest request) {
+
+        Booking booking = bookingService.getBooking(request.getSurname(), request.getRegnum());
+        List<Passenger> passengers = booking.getPassengers();
+        List<BookingSegment> bookingSegments = booking.getBookingSegments();
+
+        boolean moreInfo = request.isMoreInfo();
+        boolean commonStatus = request.isAddCommonStatus();
+
+        BookingInfoResponse response = BookingInfoResponse
+                .builder()
+                .surname(request.getSurname())
+                .regnum(booking.getPnrNumber())
+                .build();
+
+        if (moreInfo){
+            response.setCurrency(booking.getCurrency().toString());
+            response.setEmail(booking.getEmail());
+            response.setPhone(booking.getPhoneNumber());
+            response.setPassengers(passengers.stream().map(dtoMapper::toPassengerDetail).toList());
+            response.setSegments(bookingSegments.stream().map(dtoMapper::toSegmentsDetail).toList());
+        }
+
+        if (commonStatus){
+            response.setCreatedAt(booking.getCreatedAt());
+            response.setUpdatedAt(booking.getUpdatedAt());
+        }
+
+        return response;
     }
 
     @Override

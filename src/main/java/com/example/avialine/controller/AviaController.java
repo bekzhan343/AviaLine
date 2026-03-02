@@ -3,6 +3,7 @@ package com.example.avialine.controller;
 import com.example.avialine.dto.PrivacyPoliceDTO;
 import com.example.avialine.dto.request.BookingRequest;
 import com.example.avialine.dto.request.DepArrRequest;
+import com.example.avialine.dto.request.RegnumSurnameRequest;
 import com.example.avialine.dto.request.SearchTicketRequest;
 import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.SearchParamsResponse;
@@ -77,6 +78,18 @@ public class AviaController {
             return ResponseEntity.status(200).body(
                     aviaService.booking(request)
             );
+        }catch (DataNotFoundException e){
+            return ResponseEntity.status(400).body(
+                    new DetailErrorResponse(e.getMessage())
+            );
+        }
+    }
+
+    @PostMapping("${end.point.avia-booking-detail}")
+    public  ResponseEntity<?> detailBooking(@Valid @RequestBody RegnumSurnameRequest request){
+        try {
+            return ResponseEntity.status(200).body(
+                    aviaService.detailBooking(request));
         }catch (DataNotFoundException e){
             return ResponseEntity.status(400).body(
                     new DetailErrorResponse(e.getMessage())

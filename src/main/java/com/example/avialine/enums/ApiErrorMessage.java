@@ -65,7 +65,8 @@ public enum ApiErrorMessage {
     ADT_AGE_ERROR_MESSAGE("ADT passenger must be 12 or older"),
     PSP_EXPIRE_ERROR_MESSAGE("Passport expiry date must be at least 6 months after the flight date"),
     FAILED_TO_GENERATE_PNR_MESSAGE("Failed to generate unique PNR"),
-    INVALID_INF_ADT_COMBINATION_MESSAGE("Each INF must be accompanied by an ADT");
+    INVALID_INF_ADT_COMBINATION_MESSAGE("Each INF must be accompanied by an ADT"),
+    BOOKING_NOT_FOUND_MESSAGE("Booking not found, please check the surname and pnr number");
 
     private final String message;
 

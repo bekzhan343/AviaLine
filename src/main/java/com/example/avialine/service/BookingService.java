@@ -9,4 +9,6 @@ import com.example.avialine.model.entity.User;
 public interface BookingService {
 
     Booking createBooking(BookingRequest request, User user);
+
+    Booking getBooking(String surname, String pnrNumber);
 }

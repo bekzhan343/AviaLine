@@ -1,11 +1,8 @@
 package com.example.avialine.mapper;
 
 import com.example.avialine.dto.*;
-import com.example.avialine.dto.response.FaqAnswerResponse;
-import com.example.avialine.dto.response.GetFaqResponse;
+import com.example.avialine.dto.response.*;
 import com.example.avialine.dto.PopularDirectDTO;
-import com.example.avialine.dto.response.PopularDirectDetailResponse;
-import com.example.avialine.dto.response.SendServiceResponse;
 import com.example.avialine.model.entity.*;
 import org.springframework.stereotype.Component;
 
@@ -195,6 +192,30 @@ public class DTOMapper {
                 .id(privacyPolice.getId())
                 .title(privacyPolice.getTitle())
                 .file(privacyPolice.getFile())
+                .build();
+    }
+
+    public BookingInfoResponse.PassengersDetail toPassengerDetail(Passenger passenger){
+        return BookingInfoResponse.PassengersDetail
+                .builder()
+                .lastname(passenger.getLastname())
+                .firstname(passenger.getFirstname())
+                .surname(passenger.getSurname())
+                .category(passenger.getCategory().toString())
+                .sex(passenger.getSex().toString())
+                .birthdate(passenger.getBirthdate().toString())
+                .build();
+    }
+
+    public BookingInfoResponse.SegmentsDetail toSegmentsDetail(BookingSegment segment){
+        return BookingInfoResponse.SegmentsDetail
+                .builder()
+                .company(segment.getCompany())
+                .flight(segment.getFlight())
+                .departure(segment.getDeparture())
+                .arrival(segment.getArrival())
+                .date(segment.getDate().toString())
+                .subclass(segment.getSubclass())
                 .build();
     }
 }

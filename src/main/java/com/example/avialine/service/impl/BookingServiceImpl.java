@@ -4,6 +4,7 @@ import com.example.avialine.dto.request.BookingRequest;
 import com.example.avialine.enums.ApiErrorMessage;
 import com.example.avialine.enums.BookingStatus;
 import com.example.avialine.enums.Currency;
+import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.model.entity.Booking;
 import com.example.avialine.model.entity.User;
 import com.example.avialine.repo.BookingRepo;
@@ -43,6 +44,12 @@ public class BookingServiceImpl implements BookingService {
                 .pnrNumber(pnr)
                 .user(user)
                 .build();
+    }
+
+    @Override
+    public Booking getBooking(String surname, String pnrNumber) {
+        return bookingRepo.findByPnrNumberAndSurname(pnrNumber, surname)
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_MESSAGE.getMessage()));
     }
 
     private String generatePnr(){
