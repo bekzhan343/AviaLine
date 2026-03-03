@@ -2,6 +2,7 @@ package com.example.avialine.service.impl;
 
 import com.example.avialine.dto.AirportDTO;
 import com.example.avialine.dto.CityDTO;
+import com.example.avialine.dto.OrderDTO;
 import com.example.avialine.dto.PrivacyPoliceDTO;
 import com.example.avialine.dto.request.BookingRequest;
 import com.example.avialine.dto.request.DepArrRequest;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,6 +46,7 @@ public class AviaServiceImpl implements AviaService {
     private final BookingSegmentService bookingSegmentService;
     private final BookingService bookingService;
     private final PassengerService passengerService;
+    private final OrderService orderService;
 
     @Override
     public Set<SearchParamsResponse> getCountryDetail() {
@@ -179,6 +182,8 @@ public class AviaServiceImpl implements AviaService {
 
         bookingRepo.save(booking);
 
+        orderService.createOrder(booking);
+
         return new PNRResponse(booking.getPnrNumber(), booking.getStatus().toString());
     }
 
@@ -212,6 +217,87 @@ public class AviaServiceImpl implements AviaService {
         }
 
         return response;
+    }
+
+    @Override
+    public List<OrderDTO> getAllOrders() {
+
+        Authentication auth = SecurityUtil.requireAuthentication();
+
+        User user = userService.getActiveUserByPhone(auth.getName());
+
+        List<Booking> bookings = bookingService.getByUser(user);
+
+        List<Order> orders = orderService.getAllOrders(bookings);
+
+        List<BookingSegment> segments = bookingSegmentService.getBookingSegments(bookings);
+
+        List<Passenger> passengers = passengerService.getPassengers(bookings);
+
+        return orders.stream().map(
+                order -> {
+
+                    Booking booking = order.getBooking();
+
+                    List<OrderDTO.SegmentShort> segmentShorts = segments.stream()
+                            .filter(s -> s.getBooking().equals(booking))
+                            .map(
+                                    bookingSegment -> {
+
+                                        LocalDateTime departure = LocalDateTime.of(
+                                                bookingSegment.getSchedule().getDate(), bookingSegment.getSchedule().getFlight().getDepartureTime());
+
+                                        LocalDateTime arrival = departure.plusMinutes(bookingSegment.getSchedule().getFlight().getFlightMinutes());
+
+                                        return OrderDTO.SegmentShort.builder()
+                                                .flight(bookingSegment.getFlight())
+                                                .company(bookingSegment.getCompany())
+                                                .duration(convertTime(bookingSegment.getSchedule().getFlight().getFlightMinutes()))
+                                                .departure(bookingSegment.getDeparture())
+                                                .arrival(bookingSegment.getArrival())
+                                                .departureDate(bookingSegment.getSchedule().getDate().toString())
+                                                .departureTime(bookingSegment.getSchedule().getFlight().getDepartureTime().toString())
+                                                .arrivalDate(arrival.toLocalDate().toString())
+                                                .arrivalTime(bookingSegment.getSchedule().getFlight().getArrivalTime().toString())
+                                                .build();
+                                    }
+                            ).toList();
+
+
+                    List<OrderDTO.PassengerShort> passengerShorts = passengers.stream()
+                            .filter(s -> s.getBooking().equals(booking))
+                            .map(
+                                    passenger -> {
+                                        return OrderDTO.PassengerShort.builder()
+                                                .id(passenger.getId())
+                                                .firstName(passenger.getFirstname())
+                                                .lastName(passenger.getLastname())
+                                                .surname(passenger.getSurname())
+                                                .category(passenger.getCategory().toString())
+                                                .sex(passenger.getSex().toString())
+                                                .birthdate(passenger.getBirthdate().toString())
+                                                .docCountry(passenger.getDocCountry())
+                                                .doc(passenger.getDoc())
+                                                .pspexpire(passenger.getPspexpire().toString())
+                                                .docCode(passenger.getDocCode())
+                                                .build();
+                                    }
+                            ).toList();
+                    return OrderDTO
+                            .builder()
+                            .orderId(order.getId())
+                            .regnum(order.getRegnum())
+                            .email(order.getBooking().getEmail())
+                            .status(order.getStatus().toString())
+                            .price(order.getPrice().toString())
+                            .currency(order.getCurrency().toString())
+                            .segments(segmentShorts)
+                            .passengers(passengerShorts)
+                            .passengersCount(passengerShorts.size())
+                            .build();
+                }
+        ).toList();
+
     }
 
     @Override

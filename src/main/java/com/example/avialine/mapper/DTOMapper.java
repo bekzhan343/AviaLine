@@ -12,7 +12,7 @@ import java.util.List;
 public class DTOMapper {
 
 
-    public UserDTO toUserDTO(User user){
+    public UserDTO toUserDTO(User user) {
         return UserDTO
                 .builder()
                 .firstName(user.getName())
@@ -20,14 +20,14 @@ public class DTOMapper {
                 .build();
     }
 
-    public RoleDTO toRoleDTO(Role role){
+    public RoleDTO toRoleDTO(Role role) {
         return RoleDTO.builder()
                 .id(role.getId())
                 .name(role.getName())
                 .build();
     }
 
-    public UserProfileDTO toUserProfileDTO(User user,String accessToken){
+    public UserProfileDTO toUserProfileDTO(User user, String accessToken) {
         return UserProfileDTO
                 .builder()
                 .userId(user.getId())
@@ -36,7 +36,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public CountryDTO toCountryDTO(Country country){
+    public CountryDTO toCountryDTO(Country country) {
         return CountryDTO
                 .builder()
                 .code(country.getCode())
@@ -44,7 +44,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public AvailDocsDTO toDocsDTO(Doc doc, List<String> countryDTOS){
+    public AvailDocsDTO toDocsDTO(Doc doc, List<String> countryDTOS) {
         return AvailDocsDTO.
                 builder()
                 .code(doc.getCode())
@@ -53,7 +53,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public BannerDTO toBannerDTO(Banner banner){
+    public BannerDTO toBannerDTO(Banner banner) {
         return BannerDTO
                 .builder()
                 .language(banner.getLanguage())
@@ -65,7 +65,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public RuleDTO toRuleDTO(Rule rule){
+    public RuleDTO toRuleDTO(Rule rule) {
         return RuleDTO
                 .builder()
                 .language(rule.getLanguage())
@@ -75,7 +75,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public GetFaqResponse toGetFaqResponse(Faq faq){
+    public GetFaqResponse toGetFaqResponse(Faq faq) {
         return GetFaqResponse.builder()
                 .language(faq.getLanguage())
                 .slug(faq.getSlug())
@@ -83,7 +83,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public FaqAnswerResponse toFaqAnswerResponse(Faq faq){
+    public FaqAnswerResponse toFaqAnswerResponse(Faq faq) {
         return FaqAnswerResponse
                 .builder()
                 .question(faq.getQuestion())
@@ -91,7 +91,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public InfoPageDTO toInfoPageDTO(InfoPage infoPage){
+    public InfoPageDTO toInfoPageDTO(InfoPage infoPage) {
         return InfoPageDTO
                 .builder()
                 .language(infoPage.getLanguage())
@@ -113,7 +113,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public PopularDirectDTO toPopularDirectsResponse(PopularDirectory popularDirectory){
+    public PopularDirectDTO toPopularDirectsResponse(PopularDirectory popularDirectory) {
         return PopularDirectDTO
                 .builder()
                 .id(popularDirectory.getId())
@@ -127,7 +127,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public StoryDTO toStoryDTO(Story story){
+    public StoryDTO toStoryDTO(Story story) {
         return StoryDTO
                 .builder()
                 .id(story.getId())
@@ -140,7 +140,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public PopularDirectDetailResponse toPopularDirectDetailResponse(PopularDirectory popularDirectory){
+    public PopularDirectDetailResponse toPopularDirectDetailResponse(PopularDirectory popularDirectory) {
         return PopularDirectDetailResponse
                 .builder()
                 .id(popularDirectory.getId())
@@ -159,7 +159,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public ServiceDTO toServiceDTO(Service service){
+    public ServiceDTO toServiceDTO(Service service) {
         return ServiceDTO
                 .builder()
                 .id(service.getId())
@@ -168,7 +168,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public AirportDTO toAirportDTO(Airport airport){
+    public AirportDTO toAirportDTO(Airport airport) {
         return AirportDTO
                 .builder()
                 .id(airport.getId())
@@ -177,7 +177,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public CityDTO toCityDTO(Airport airport){
+    public CityDTO toCityDTO(Airport airport) {
         return CityDTO
                 .builder()
                 .id(airport.getId())
@@ -186,7 +186,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public PrivacyPoliceDTO toPrivacyPoliceDTO(PrivacyPolice privacyPolice){
+    public PrivacyPoliceDTO toPrivacyPoliceDTO(PrivacyPolice privacyPolice) {
         return PrivacyPoliceDTO
                 .builder()
                 .id(privacyPolice.getId())
@@ -195,7 +195,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public BookingInfoResponse.PassengersDetail toPassengerDetail(Passenger passenger){
+    public BookingInfoResponse.PassengersDetail toPassengerDetail(Passenger passenger) {
         return BookingInfoResponse.PassengersDetail
                 .builder()
                 .lastname(passenger.getLastname())
@@ -207,7 +207,7 @@ public class DTOMapper {
                 .build();
     }
 
-    public BookingInfoResponse.SegmentsDetail toSegmentsDetail(BookingSegment segment){
+    public BookingInfoResponse.SegmentsDetail toSegmentsDetail(BookingSegment segment) {
         return BookingInfoResponse.SegmentsDetail
                 .builder()
                 .company(segment.getCompany())

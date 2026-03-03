@@ -4,11 +4,14 @@ import com.example.avialine.dto.request.BookingRequest;
 import com.example.avialine.enums.ApiErrorMessage;
 import com.example.avialine.enums.Category;
 import com.example.avialine.enums.Sex;
+import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.exception.ValidationException;
 import com.example.avialine.model.entity.Booking;
 import com.example.avialine.model.entity.BookingSegment;
 import com.example.avialine.model.entity.Passenger;
+import com.example.avialine.repo.PassengerRepo;
 import com.example.avialine.service.PassengerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,9 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@RequiredArgsConstructor
 @Service
 public class PassengerServiceImpl implements PassengerService {
 
+    private final PassengerRepo passengerRepo;
 
     @Override
     public List<Passenger> createPassenger(Booking booking, BookingRequest request, List<BookingSegment> bookingSegments) {
@@ -89,6 +94,21 @@ public class PassengerServiceImpl implements PassengerService {
         if (infCount > adtCount) {
             errors.put("Invalid passengers:", List.of(ApiErrorMessage.INVALID_INF_ADT_COMBINATION_MESSAGE.getMessage()));
             throw new ValidationException("error:", errors);
+        }
+
+        return passengers;
+    }
+
+    @Override
+    public List<Passenger> getPassengers(List<Booking> bookings) {
+
+        List<Passenger> passengers = new ArrayList<>();
+
+        for (Booking booking : bookings) {
+            Passenger passenger = passengerRepo.findByBookingId(booking.getId())
+                    .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.PASSENGER_NOT_FOUND_MESSAGE.getMessage()));
+
+            passengers.add(passenger);
         }
 
         return passengers;

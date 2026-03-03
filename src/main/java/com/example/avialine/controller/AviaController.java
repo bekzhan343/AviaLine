@@ -1,5 +1,6 @@
 package com.example.avialine.controller;
 
+import com.example.avialine.dto.OrderDTO;
 import com.example.avialine.dto.PrivacyPoliceDTO;
 import com.example.avialine.dto.request.BookingRequest;
 import com.example.avialine.dto.request.DepArrRequest;
@@ -90,6 +91,19 @@ public class AviaController {
         try {
             return ResponseEntity.status(200).body(
                     aviaService.detailBooking(request));
+        }catch (DataNotFoundException e){
+            return ResponseEntity.status(400).body(
+                    new DetailErrorResponse(e.getMessage())
+            );
+        }
+    }
+
+    @GetMapping("${end.point.avia-orders}")
+    public ResponseEntity<?> getOrders(){
+        try {
+            return ResponseEntity.status(200).body(
+                    aviaService.getAllOrders()
+            );
         }catch (DataNotFoundException e){
             return ResponseEntity.status(400).body(
                     new DetailErrorResponse(e.getMessage())

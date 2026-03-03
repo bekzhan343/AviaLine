@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -50,6 +51,12 @@ public class BookingServiceImpl implements BookingService {
     public Booking getBooking(String surname, String pnrNumber) {
         return bookingRepo.findByPnrNumberAndSurname(pnrNumber, surname)
                 .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_MESSAGE.getMessage()));
+    }
+
+    @Override
+    public List<Booking> getByUser(User user) {
+
+        return bookingRepo.getByUser(user);
     }
 
     private String generatePnr(){

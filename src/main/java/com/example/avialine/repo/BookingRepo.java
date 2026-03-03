@@ -1,11 +1,13 @@
 package com.example.avialine.repo;
 
 import com.example.avialine.model.entity.Booking;
+import com.example.avialine.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,5 +23,12 @@ public interface BookingRepo extends JpaRepository<Booking, Integer> {
     Optional<Booking> findByPnrNumberAndSurname(
             @Param("pnrNumber") String pnrNumber,
             @Param("surname") String surname);
+
+    @Query("""
+    SELECT b FROM Booking b JOIN FETCH b.order o
+    WHERE b.user = :user
+    AND b.order IS NOT NULL
+""")
+    List<Booking> getByUser(User user);
 
 }

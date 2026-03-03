@@ -39,4 +39,8 @@ public class BookingSegment {
 
     @Column(name = "subclass")
     private String subclass;
+
+    @ManyToOne
+    @JoinColumn(name = "schedule_id")
+    private FlightSchedule schedule;
 }

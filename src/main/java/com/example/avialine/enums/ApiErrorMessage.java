@@ -66,7 +66,9 @@ public enum ApiErrorMessage {
     PSP_EXPIRE_ERROR_MESSAGE("Passport expiry date must be at least 6 months after the flight date"),
     FAILED_TO_GENERATE_PNR_MESSAGE("Failed to generate unique PNR"),
     INVALID_INF_ADT_COMBINATION_MESSAGE("Each INF must be accompanied by an ADT"),
-    BOOKING_NOT_FOUND_MESSAGE("Booking not found, please check the surname and pnr number");
+    BOOKING_NOT_FOUND_MESSAGE("Booking not found, please check the surname and pnr number"),
+    ORDER_NOT_FOUND_MESSAGE("Order not found!"),
+    PASSENGER_NOT_FOUND_MESSAGE("Passenger not found!");
 
     private final String message;
 

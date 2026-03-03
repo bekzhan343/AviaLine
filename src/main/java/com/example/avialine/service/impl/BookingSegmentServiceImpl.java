@@ -15,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -52,10 +54,26 @@ public class BookingSegmentServiceImpl implements BookingSegmentService {
                     .arrival(flight.getArrivalCode())
                     .date(schedule.getDate())
                     .subclass(seg.getSubclass())
+                    .schedule(schedule)
                     .build()
             );
         }
         return bookingSegments;
     }
+
+    @Override
+    public List<BookingSegment> getBookingSegments(List<Booking> bookings) {
+
+        List<BookingSegment> bookingSegments = new ArrayList<>();
+
+        for (Booking booking : bookings) {
+            BookingSegment segment = segmentRepo.getByBookingId(booking.getId());
+
+            bookingSegments.add(segment);
+        }
+
+        return bookingSegments;
+    }
+
 
 }

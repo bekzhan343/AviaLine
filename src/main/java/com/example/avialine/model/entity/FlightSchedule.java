@@ -1,9 +1,11 @@
 package com.example.avialine.model.entity;
 
+import com.example.avialine.enums.Currency;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -39,5 +41,12 @@ public class FlightSchedule {
 
     @Column(name = "avail_first")
     private Boolean availFirst;
+
+    @Column(name = "price_per_passenger", precision = 10, scale = 2)
+    private BigDecimal price;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "currency", length = 3)
+    private Currency currency;
 
 }

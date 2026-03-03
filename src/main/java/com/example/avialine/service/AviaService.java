@@ -1,5 +1,6 @@
 package com.example.avialine.service;
 
+import com.example.avialine.dto.OrderDTO;
 import com.example.avialine.dto.PrivacyPoliceDTO;
 import com.example.avialine.dto.request.BookingRequest;
 import com.example.avialine.dto.request.DepArrRequest;
@@ -27,5 +28,7 @@ public interface AviaService {
     PNRResponse booking(BookingRequest request);
 
     BookingInfoResponse detailBooking(@NotNull RegnumSurnameRequest request);
+
+    List<OrderDTO> getAllOrders();
 }
 

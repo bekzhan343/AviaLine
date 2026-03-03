@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -63,4 +64,7 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToOne(mappedBy = "booking", cascade =   CascadeType.ALL, orphanRemoval = true)
+    private Order order;
 }
