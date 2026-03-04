@@ -30,5 +30,7 @@ public interface AviaService {
     BookingInfoResponse detailBooking(@NotNull RegnumSurnameRequest request);
 
     List<OrderDTO> getAllOrders();
+
+    OrderDTO getOrderById(@NotNull Integer orderId);
 }
 

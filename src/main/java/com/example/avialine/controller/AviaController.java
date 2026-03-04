@@ -110,4 +110,16 @@ public class AviaController {
             );
         }
     }
+
+    @GetMapping("${end.point.avia-orders-id}")
+    public ResponseEntity<?> getOrderById(@Valid @PathVariable("id") Integer id){
+        try {
+            return ResponseEntity.status(200).body(
+                    aviaService.getOrderById(id));
+        }catch (DataNotFoundException e) {
+            return ResponseEntity.status(404).body(
+                    new DetailErrorResponse(e.getMessage())
+            );
+        }
+    }
 }

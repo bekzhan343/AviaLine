@@ -301,6 +301,65 @@ public class AviaServiceImpl implements AviaService {
     }
 
     @Override
+    public OrderDTO getOrderById(Integer id) {
+
+        Order order = orderService.getOrderById(id);
+
+
+
+        List<OrderDTO.SegmentShort> segments = order.getBooking().getBookingSegments().stream().map(
+                bookingSegment -> {
+
+                    LocalDateTime depTime = LocalDateTime.of(bookingSegment.getSchedule().getDate(), bookingSegment.getSchedule().getFlight().getDepartureTime());
+
+                    LocalDateTime arrTime = depTime.plusMinutes(bookingSegment.getSchedule().getFlight().getFlightMinutes());
+
+                    return OrderDTO.SegmentShort.builder()
+                        .flight(bookingSegment.getFlight())
+                        .company(bookingSegment.getCompany())
+                        .duration(bookingSegment.getSchedule().getFlight().getFlightMinutes().toString())
+                        .departure(bookingSegment.getDeparture())
+                        .arrival(bookingSegment.getArrival())
+                        .departureDate(depTime.toLocalDate().toString())
+                        .departureTime(depTime.toLocalTime().toString())
+                        .arrivalDate(arrTime.toLocalDate().toString())
+                        .arrivalTime(arrTime.toLocalTime().toString())
+                        .build();
+                }
+        ).toList();
+
+        List<OrderDTO.PassengerShort> passengers = order.getBooking().getPassengers().stream().map(
+                passenger -> {
+                    return OrderDTO.PassengerShort.builder()
+                            .id(passenger.getId())
+                            .firstName(passenger.getFirstname())
+                            .lastName(passenger.getLastname())
+                            .surname(passenger.getSurname())
+                            .category(passenger.getCategory().toString())
+                            .sex(passenger.getSex().toString())
+                            .birthdate(passenger.getBirthdate().toString())
+                            .docCountry(passenger.getDocCountry())
+                            .doc(passenger.getDoc())
+                            .pspexpire(passenger.getPspexpire().toString())
+                            .docCode(passenger.getDocCode())
+                            .build();
+                }
+        ).toList();
+
+        return OrderDTO.builder()
+                .orderId(order.getId())
+                .regnum(order.getRegnum())
+                .email(order.getBooking().getEmail())
+                .status(order.getStatus().toString())
+                .price(order.getPrice().toString())
+                .currency(order.getCurrency().toString())
+                .segments(segments)
+                .passengers(passengers)
+                .passengersCount(passengers.size())
+                .build();
+    }
+
+    @Override
     public SearchTicketResponse searchTicket(SearchTicketRequest request) {
 
         List<SearchTicketResponse.Variant> variants = new ArrayList<>();

@@ -56,5 +56,11 @@ public class OrderServiceImpl implements OrderService {
         return orders;
     }
 
+    @Override
+    public Order getOrderById(Integer orderId) {
+        return orderRepo.findById(orderId)
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.ORDER_NOT_FOUND_MESSAGE.getMessage()));
+    }
+
 
 }

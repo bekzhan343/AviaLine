@@ -42,7 +42,7 @@ spring:
       com.AviaLine: debug
 
 server:
-  port: 8171
+  port: 8172
 
 end:
   point:
@@ -57,6 +57,7 @@ end:
     avia-booking: /booking/
     avia-booking-detail: /booking-detail/
     avia-orders: /orders/
+    avia-orders-id: /orders/{id}/
 
     base: /base
     base-countries: /api/countries/
