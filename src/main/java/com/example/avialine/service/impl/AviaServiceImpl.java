@@ -360,6 +360,14 @@ public class AviaServiceImpl implements AviaService {
     }
 
     @Override
+    public OrderStatusResponse getOrderStatus(String regnum) {
+
+        Order order = orderService.getOrderByRegnum(regnum);
+
+        return new OrderStatusResponse(order.getId(), order.getStatus().toString());
+    }
+
+    @Override
     public SearchTicketResponse searchTicket(SearchTicketRequest request) {
 
         List<SearchTicketResponse.Variant> variants = new ArrayList<>();

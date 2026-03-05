@@ -62,5 +62,11 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.ORDER_NOT_FOUND_MESSAGE.getMessage()));
     }
 
+    @Override
+    public Order getOrderByRegnum(String regnum) {
+        return orderRepo.findOrderByRegnum(regnum)
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.ORDER_NOT_FOUND_MESSAGE.getMessage()));
+    }
+
 
 }

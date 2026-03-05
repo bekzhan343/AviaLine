@@ -58,6 +58,7 @@ end:
     avia-booking-detail: /booking-detail/
     avia-orders: /orders/
     avia-orders-id: /orders/{id}/
+    avia-order-status: /order/status
 
     base: /base
     base-countries: /api/countries/

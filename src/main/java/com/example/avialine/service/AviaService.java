@@ -32,5 +32,7 @@ public interface AviaService {
     List<OrderDTO> getAllOrders();
 
     OrderDTO getOrderById(@NotNull Integer orderId);
+
+    OrderStatusResponse getOrderStatus(@NotNull String regnum);
 }
 

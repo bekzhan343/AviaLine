@@ -14,4 +14,6 @@ public interface OrderService {
     List<Order> getAllOrders(List<Booking> bookings);
 
     Order getOrderById(@NotNull Integer orderId);
+
+    Order getOrderByRegnum(@NotNull String regnum);
 }

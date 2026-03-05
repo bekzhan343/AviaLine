@@ -11,4 +11,6 @@ public interface OrderRepo extends JpaRepository<Order, Integer> {
 
     Optional<Order> findByBookingId(Integer bookingId);
 
+    Optional<Order> findOrderByRegnum(String regnum);
+
 }
