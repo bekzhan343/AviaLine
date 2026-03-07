@@ -57,4 +57,10 @@ public class Passenger {
     @Column(name = "pspexpire", nullable = false)
     private LocalDate pspexpire;
 
+    @Column(name = "parent_pass_id", nullable = false)
+    private Integer parentPassId;
+
+    @Column(name = "nationality", nullable = false, length = 2)
+    private String nationality;
+
 }

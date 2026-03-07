@@ -59,6 +59,7 @@ end:
     avia-orders: /orders/
     avia-orders-id: /orders/{id}/
     avia-order-status: /order/status
+    avia-infant: /add-infant
 
     base: /base
     base-countries: /api/countries/

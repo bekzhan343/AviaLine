@@ -2,10 +2,7 @@ package com.example.avialine.service;
 
 import com.example.avialine.dto.OrderDTO;
 import com.example.avialine.dto.PrivacyPoliceDTO;
-import com.example.avialine.dto.request.BookingRequest;
-import com.example.avialine.dto.request.DepArrRequest;
-import com.example.avialine.dto.request.RegnumSurnameRequest;
-import com.example.avialine.dto.request.SearchTicketRequest;
+import com.example.avialine.dto.request.*;
 import com.example.avialine.dto.response.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -34,5 +31,7 @@ public interface AviaService {
     OrderDTO getOrderById(@NotNull Integer orderId);
 
     OrderStatusResponse getOrderStatus(@NotNull String regnum);
+
+    PNRResponse addInfant(AddInfantRequest request);
 }
 

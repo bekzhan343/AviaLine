@@ -1,23 +1,23 @@
 package com.example.avialine.controller;
 
 import com.example.avialine.dto.PrivacyPoliceDTO;
-import com.example.avialine.dto.request.BookingRequest;
-import com.example.avialine.dto.request.DepArrRequest;
-import com.example.avialine.dto.request.RegnumSurnameRequest;
-import com.example.avialine.dto.request.SearchTicketRequest;
+import com.example.avialine.dto.request.*;
 import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.SearchParamsResponse;
 import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.exception.PastDateException;
 import com.example.avialine.service.AviaService;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("${end.point.avia-base}")
 @RestController
@@ -131,6 +131,19 @@ public class AviaController {
         }catch (DataNotFoundException ex){
             return ResponseEntity.status(404).body(
                     new DetailErrorResponse(ex.getMessage())
+            );
+        }
+    }
+
+    @PostMapping("${end.point.avia-infant}")
+    public ResponseEntity<?> addInfant(@Valid @RequestBody AddInfantRequest request){
+        try {
+            return ResponseEntity.status(200).body(
+                    aviaService.addInfant(request)
+            );
+        }catch (DataNotFoundException e){
+            return ResponseEntity.status(404).body(
+                    new DetailErrorResponse(e.getMessage())
             );
         }
     }

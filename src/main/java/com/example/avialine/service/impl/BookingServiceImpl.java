@@ -48,15 +48,22 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking getBooking(String surname, String pnrNumber) {
+    public Booking getBookingBySurnameAndPnr(String surname, String pnrNumber) {
         return bookingRepo.findByPnrNumberAndSurname(pnrNumber, surname)
-                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_MESSAGE.getMessage()));
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_BY_PNR_AND_SURNAME_MESSAGE.getMessage()));
     }
 
     @Override
     public List<Booking> getByUser(User user) {
 
         return bookingRepo.getByUser(user);
+    }
+
+    @Override
+    public Booking getBookingByRegnum(String pnr) {
+        return bookingRepo.getBookingByPnrNumber(pnr).orElseThrow(
+                () -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_BY_PNR.getMessage())
+        );
     }
 
     private String generatePnr(){

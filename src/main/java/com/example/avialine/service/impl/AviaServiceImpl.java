@@ -4,10 +4,7 @@ import com.example.avialine.dto.AirportDTO;
 import com.example.avialine.dto.CityDTO;
 import com.example.avialine.dto.OrderDTO;
 import com.example.avialine.dto.PrivacyPoliceDTO;
-import com.example.avialine.dto.request.BookingRequest;
-import com.example.avialine.dto.request.DepArrRequest;
-import com.example.avialine.dto.request.RegnumSurnameRequest;
-import com.example.avialine.dto.request.SearchTicketRequest;
+import com.example.avialine.dto.request.*;
 import com.example.avialine.dto.response.*;
 import com.example.avialine.enums.*;
 import com.example.avialine.exception.*;
@@ -25,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +45,7 @@ public class AviaServiceImpl implements AviaService {
     private final BookingService bookingService;
     private final PassengerService passengerService;
     private final OrderService orderService;
+    private final DocRepo docRepo;
 
     @Override
     public Set<SearchParamsResponse> getCountryDetail() {
@@ -190,7 +189,7 @@ public class AviaServiceImpl implements AviaService {
     @Override
     public BookingInfoResponse detailBooking(RegnumSurnameRequest request) {
 
-        Booking booking = bookingService.getBooking(request.getSurname(), request.getRegnum());
+        Booking booking = bookingService.getBookingBySurnameAndPnr(request.getSurname(), request.getRegnum());
         List<Passenger> passengers = booking.getPassengers();
         List<BookingSegment> bookingSegments = booking.getBookingSegments();
 
@@ -365,6 +364,40 @@ public class AviaServiceImpl implements AviaService {
         Order order = orderService.getOrderByRegnum(regnum);
 
         return new OrderStatusResponse(order.getId(), order.getStatus().toString());
+    }
+
+    @Override
+    public PNRResponse addInfant(AddInfantRequest request) {
+        Map<String,List<String>> errors = new HashMap<>();
+
+        Passenger parent = passengerService.getPassengerById(request.getParentPassId());
+
+        long age = Period.between(parent.getBirthdate(), LocalDate.now()).getYears();
+
+        if (parent.getBirthdate().plusYears(18).isAfter(LocalDate.now())){
+            errors.put("noAvailAdtAge", List.of(ApiErrorMessage.UNAVAILABLE_ADT_AGE_MESSAGE.getMessage(age)));
+        }
+
+        if (request.getBirthdate().plusYears(2).isBefore(LocalDate.now())) {
+            errors.put("age", List.of(ApiErrorMessage.INF_AGE_ERROR_MESSAGE.getMessage()));
+        }
+
+        if (!request.getDoc().equals(request.getDocCode())){
+            errors.put("doc", List.of(ApiErrorMessage.DOC_DOCCODE_DOES_NOT_MATCH_MESSAGE.getMessage()));
+        }
+        if (!errors.isEmpty()){
+            throw new ValidationException("errors", errors);
+        }
+
+        Doc doc = docRepo.findByCode(request.getDocCode())
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.DOC_NOT_AVAILABLE_MESSAGE.getMessage()));
+
+
+        Booking booking = bookingService.getBookingByRegnum(request.getRegnum());
+
+        Passenger passenger = passengerService.addInfant(request, booking, request.getNationality());
+
+        return new PNRResponse(booking.getPnrNumber(), BookingStatus.CREATED.getStatus());
     }
 
     @Override

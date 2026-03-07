@@ -1,5 +1,6 @@
 package com.example.avialine.service.impl;
 
+import com.example.avialine.dto.request.AddInfantRequest;
 import com.example.avialine.dto.request.BookingRequest;
 import com.example.avialine.enums.ApiErrorMessage;
 import com.example.avialine.enums.Category;
@@ -11,6 +12,8 @@ import com.example.avialine.model.entity.BookingSegment;
 import com.example.avialine.model.entity.Passenger;
 import com.example.avialine.repo.PassengerRepo;
 import com.example.avialine.service.PassengerService;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -112,5 +115,32 @@ public class PassengerServiceImpl implements PassengerService {
         }
 
         return passengers;
+    }
+
+    @Override
+    public Passenger addInfant(AddInfantRequest request, Booking booking, String docCountry) {
+         Passenger passenger = Passenger.builder()
+                .booking(booking)
+                .parentPassId(request.getParentPassId())
+                .lastname(request.getLastname())
+                .firstname(request.getFirstname())
+                .surname(request.getSurname())
+                .category(Category.valueOf(request.getCategory()))
+                .sex(Sex.valueOf(request.getSex()))
+                .birthdate(request.getBirthdate())
+                .docCountry(docCountry)
+                .docCode(request.getDocCode())
+                .doc(request.getDoc())
+                .nationality(request.getNationality())
+                .pspexpire(request.getPspExpire())
+                .build();
+
+         return passengerRepo.save(passenger);
+    }
+
+    @Override
+    public Passenger getPassengerById(@NotNull Integer id) {
+        return passengerRepo.findById(id)
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.PASSENGER_NOT_FOUND_MESSAGE.getMessage()));
     }
 }

@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DocRepo extends JpaRepository<Doc, Integer> {
 
     @Query("SELECT d FROM Doc d left join fetch d.countries")
     List<Doc> findAllWithCountries();
+
+    Optional<Doc> findByCode(String code);
+
 }

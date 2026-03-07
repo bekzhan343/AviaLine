@@ -31,4 +31,6 @@ public interface BookingRepo extends JpaRepository<Booking, Integer> {
 """)
     List<Booking> getByUser(User user);
 
+    Optional<Booking> getBookingByPnrNumber(String pnr);
+
 }

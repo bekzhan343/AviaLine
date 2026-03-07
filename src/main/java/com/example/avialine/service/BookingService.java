@@ -12,7 +12,9 @@ public interface BookingService {
 
     Booking createBooking(BookingRequest request, User user);
 
-    Booking getBooking(String surname, String pnrNumber);
+    Booking getBookingBySurnameAndPnr(String surname, String pnrNumber);
 
     List<Booking> getByUser(User user);
+
+    Booking getBookingByRegnum(String pnr);
 }
