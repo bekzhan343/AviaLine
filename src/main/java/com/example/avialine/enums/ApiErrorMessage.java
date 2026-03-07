@@ -73,7 +73,8 @@ public enum ApiErrorMessage {
     DOC_NOT_AVAILABLE_MESSAGE("Document not available!"),
     DOC_DOCCODE_DOES_NOT_MATCH_MESSAGE("Document code doesn't match!"),
     UNAVAILABLE_ADT_AGE_MESSAGE("Unavailable ADT age -> %s "),
-    BOOKING_NOT_FOUND_BY_PNR("Booking not found, please check the pnr number");
+    BOOKING_NOT_FOUND_BY_PNR("Booking not found, please check the pnr number"),
+    BOOKING_HISTORY_NOT_FOUND("Booking history not found!");
 
     private final String message;
 

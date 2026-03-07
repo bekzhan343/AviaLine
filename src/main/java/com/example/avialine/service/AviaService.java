@@ -33,5 +33,7 @@ public interface AviaService {
     OrderStatusResponse getOrderStatus(@NotNull String regnum);
 
     PNRResponse addInfant(AddInfantRequest request);
+
+    PnrVersionResponse getPnrVersion(RegnumRequest request);
 }
 

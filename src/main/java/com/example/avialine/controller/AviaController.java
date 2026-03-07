@@ -7,7 +7,6 @@ import com.example.avialine.dto.response.SearchParamsResponse;
 import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.exception.PastDateException;
 import com.example.avialine.service.AviaService;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -140,6 +139,19 @@ public class AviaController {
         try {
             return ResponseEntity.status(200).body(
                     aviaService.addInfant(request)
+            );
+        }catch (DataNotFoundException e){
+            return ResponseEntity.status(404).body(
+                    new DetailErrorResponse(e.getMessage())
+            );
+        }
+    }
+
+    @PostMapping("${end.point.avia-pnr-version}")
+    public ResponseEntity<?> getPnrVersion(@Valid @RequestBody RegnumRequest request){
+        try {
+            return ResponseEntity.status(200).body(
+                    aviaService.getPnrVersion(request)
             );
         }catch (DataNotFoundException e){
             return ResponseEntity.status(404).body(

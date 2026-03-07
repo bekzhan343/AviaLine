@@ -4,6 +4,8 @@ import com.example.avialine.enums.Currency;
 import com.example.avialine.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -67,4 +69,7 @@ public class Booking {
 
     @OneToOne(mappedBy = "booking", cascade =   CascadeType.ALL, orphanRemoval = true)
     private Order order;
+
+    @Column(name = "pnr_version")
+    private Integer pnrVersion = 1;
 }

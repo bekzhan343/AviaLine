@@ -6,6 +6,7 @@ import com.example.avialine.model.entity.Booking;
 import com.example.avialine.model.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface BookingService {
@@ -16,5 +17,6 @@ public interface BookingService {
 
     List<Booking> getByUser(User user);
 
-    Booking getBookingByRegnum(String pnr);
+
+
 }

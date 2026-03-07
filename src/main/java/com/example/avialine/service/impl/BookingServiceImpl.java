@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -42,6 +43,7 @@ public class BookingServiceImpl implements BookingService {
                 .email(request.getEmail())
                 .currency(Currency.valueOf(request.getCurrency()))
                 .updatedAt(null)
+                .pnrVersion(1)
                 .pnrNumber(pnr)
                 .user(user)
                 .build();
@@ -57,13 +59,6 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> getByUser(User user) {
 
         return bookingRepo.getByUser(user);
-    }
-
-    @Override
-    public Booking getBookingByRegnum(String pnr) {
-        return bookingRepo.getBookingByPnrNumber(pnr).orElseThrow(
-                () -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_BY_PNR.getMessage())
-        );
     }
 
     private String generatePnr(){

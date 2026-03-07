@@ -46,6 +46,8 @@ public class AviaServiceImpl implements AviaService {
     private final PassengerService passengerService;
     private final OrderService orderService;
     private final DocRepo docRepo;
+    private final BookingHistoryRepo bHistoryRepo;
+    private final OrderRepo orderRepo;
 
     @Override
     public Set<SearchParamsResponse> getCountryDetail() {
@@ -179,9 +181,20 @@ public class AviaServiceImpl implements AviaService {
         List<Passenger> passengers = passengerService.createPassenger(booking, request, bookingSegments);
         booking.setPassengers(passengers);
 
-        bookingRepo.save(booking);
+        Booking savedBooking = bookingRepo.save(booking);
 
         orderService.createOrder(booking);
+
+        BookingHistory bookingHistory = BookingHistory.builder()
+                .booking(savedBooking)
+                .pnrVersion(savedBooking.getPnrVersion())
+                .changeType(ChangeType.BOOKING_CREATED.toString())
+                .comment(ApiMessage.BOOKING_CREATED_COMMENT.getMessage(savedBooking.getPnrNumber()))
+                .build();
+
+        bHistoryRepo.save(bookingHistory);
+
+
 
         return new PNRResponse(booking.getPnrNumber(), booking.getStatus().toString());
     }
@@ -345,12 +358,14 @@ public class AviaServiceImpl implements AviaService {
                 }
         ).toList();
 
+        BigDecimal total = order.getPrice().multiply(BigDecimal.valueOf(passengers.size()));
+
         return OrderDTO.builder()
                 .orderId(order.getId())
                 .regnum(order.getRegnum())
                 .email(order.getBooking().getEmail())
                 .status(order.getStatus().toString())
-                .price(order.getPrice().toString())
+                .price(total.toString())
                 .currency(order.getCurrency().toString())
                 .segments(segments)
                 .passengers(passengers)
@@ -374,7 +389,7 @@ public class AviaServiceImpl implements AviaService {
 
         long age = Period.between(parent.getBirthdate(), LocalDate.now()).getYears();
 
-        if (parent.getBirthdate().plusYears(18).isAfter(LocalDate.now())){
+        if (age < 18){
             errors.put("noAvailAdtAge", List.of(ApiErrorMessage.UNAVAILABLE_ADT_AGE_MESSAGE.getMessage(age)));
         }
 
@@ -389,15 +404,46 @@ public class AviaServiceImpl implements AviaService {
             throw new ValidationException("errors", errors);
         }
 
-        Doc doc = docRepo.findByCode(request.getDocCode())
+        docRepo.findByCode(request.getDocCode())
                 .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.DOC_NOT_AVAILABLE_MESSAGE.getMessage()));
 
 
-        Booking booking = bookingService.getBookingByRegnum(request.getRegnum());
+        Booking booking = bookingRepo.getBookingByPnrNumber(request.getRegnum())
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_BY_PNR.getMessage()));
+        booking.setPnrVersion(booking.getPnrVersion() + 1);
+        bookingRepo.save(booking);
 
-        Passenger passenger = passengerService.addInfant(request, booking, request.getNationality());
+        BookingHistory bHistory = BookingHistory.builder()
+                .booking(booking)
+                .pnrVersion(booking.getPnrVersion())
+                .changeType(ChangeType.ADDED_INFANT.toString())
+                .comment(ApiMessage.ADDED_INFANT_MESSAGE.getMessage(booking.getPnrNumber()))
+                .build();
+
+        bHistoryRepo.save(bHistory);
+
+        passengerService.addInfant(request, booking, request.getNationality());
+
+        Order order = orderService.getOrderByRegnum(request.getRegnum());
+        order.setPassengerCount(order.getPassengerCount() + 1);
+        orderRepo.save(order);
 
         return new PNRResponse(booking.getPnrNumber(), BookingStatus.CREATED.getStatus());
+    }
+
+    @Override
+    public PnrVersionResponse getPnrVersion(RegnumRequest request) {
+        Booking booking = bookingRepo.getBookingByPnrNumber(request.getRegnum())
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_BY_PNR.getMessage()));
+
+        BookingHistory history = bHistoryRepo.getByBookingId(booking.getId())
+                .orElseThrow(() -> new  DataNotFoundException(ApiErrorMessage.BOOKING_HISTORY_NOT_FOUND.getMessage()));
+
+        return PnrVersionResponse.builder()
+                .pnrVersion(history.getPnrVersion())
+                .changeType(ChangeType.valueOf(history.getChangeType()).toString())
+                .comment(history.getComment())
+                .build();
     }
 
     @Override

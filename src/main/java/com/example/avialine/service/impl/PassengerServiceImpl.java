@@ -108,10 +108,12 @@ public class PassengerServiceImpl implements PassengerService {
         List<Passenger> passengers = new ArrayList<>();
 
         for (Booking booking : bookings) {
-            Passenger passenger = passengerRepo.findByBookingId(booking.getId())
-                    .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.PASSENGER_NOT_FOUND_MESSAGE.getMessage()));
+            List<Passenger> bookingPassenger = passengerRepo.findByBookingId(booking.getId());
 
-            passengers.add(passenger);
+            if (bookingPassenger.isEmpty()) {
+                throw new DataNotFoundException(ApiErrorMessage.PASSENGER_NOT_FOUND_MESSAGE.getMessage());
+            }
+            passengers.addAll(bookingPassenger);
         }
 
         return passengers;

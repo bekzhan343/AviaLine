@@ -60,6 +60,7 @@ end:
     avia-orders-id: /orders/{id}/
     avia-order-status: /order/status
     avia-infant: /add-infant
+    avia-pnr-version: /pnr-version/
 
     base: /base
     base-countries: /api/countries/
