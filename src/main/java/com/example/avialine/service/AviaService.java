@@ -35,5 +35,7 @@ public interface AviaService {
     PNRResponse addInfant(AddInfantRequest request);
 
     PnrVersionResponse getPnrVersion(RegnumRequest request);
+
+    RefundQuoteResponse refundQuote(@NotNull RefundQuoteRequest request);
 }
 

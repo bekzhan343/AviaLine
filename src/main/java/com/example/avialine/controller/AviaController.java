@@ -4,6 +4,8 @@ import com.example.avialine.dto.PrivacyPoliceDTO;
 import com.example.avialine.dto.request.*;
 import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.SearchParamsResponse;
+import com.example.avialine.exception.BadRequestException;
+import com.example.avialine.exception.DataAlreadyExistsException;
 import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.exception.PastDateException;
 import com.example.avialine.service.AviaService;
@@ -160,4 +162,20 @@ public class AviaController {
         }
     }
 
+    @PostMapping("${end.point.avia-refund-quote}")
+    public ResponseEntity<?> refundQuote(@Valid @RequestBody RefundQuoteRequest request) {
+        try {
+            return ResponseEntity.status(200).body(
+                    aviaService.refundQuote(request)
+            );
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.status(404).body(
+                    new DetailErrorResponse(e.getMessage())
+            );
+        } catch (DataAlreadyExistsException  | BadRequestException e) {
+            return ResponseEntity.status(400).body(
+                    new DetailErrorResponse(e.getMessage())
+            );
+        }
+    }
 }

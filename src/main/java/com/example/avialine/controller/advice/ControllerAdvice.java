@@ -5,6 +5,7 @@ import com.example.avialine.dto.response.DetailErrorResponse;
 import com.example.avialine.dto.response.GlobalErrorResponse;
 import com.example.avialine.exception.*;
 import com.example.avialine.enums.ApiErrorMessage;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -188,5 +189,10 @@ public class ControllerAdvice {
         return ResponseEntity.status(400).body(
                 new DetailErrorResponse(ApiErrorMessage.INVALID_REQUEST_FORMAT_MESSAGE.getMessage())
         );
+    }
+
+    @ExceptionHandler(com.example.avialine.exception.BadRequestException.class)
+    public ResponseEntity<DefaultResponse> handlerBadRequestException(BadRequestException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new DefaultResponse(false , e.getMessage()));
     }
 }

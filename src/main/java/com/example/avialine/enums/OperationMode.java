@@ -4,19 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public enum OrderStatus {
+@Getter
+public enum OperationMode {
 
-    CREATED,
-    PENDING,
-    PAID,
-    CANCELLED,
-    ISSUED,
-    REFUNDED,
-    EXPIRED,
-    CONFIRMED;
+    VOLUNTARY,
+    INVOLUNTARY;
 
     private String value;
+
 }
