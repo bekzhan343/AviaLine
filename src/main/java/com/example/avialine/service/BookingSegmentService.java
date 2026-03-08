@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface BookingSegmentService {
 
-    List<BookingSegment> createBookingSegments(Booking booking, List<BookingRequest.Segment> segments);
+    Set<BookingSegment> createBookingSegments(Booking booking, List<BookingRequest.Segment> segments);
 
     List<BookingSegment> getBookingSegments(List<Booking> bookings);
 }

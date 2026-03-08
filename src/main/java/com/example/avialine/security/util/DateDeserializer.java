@@ -14,7 +14,7 @@ import java.time.format.DateTimeParseException;
 
 public class DateDeserializer extends StdDeserializer<LocalDate> {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     protected DateDeserializer() {
         super(LocalDate.class);

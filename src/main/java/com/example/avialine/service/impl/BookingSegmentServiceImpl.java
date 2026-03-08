@@ -28,9 +28,9 @@ public class BookingSegmentServiceImpl implements BookingSegmentService {
     private final BookingSegmentRepo segmentRepo;
 
     @Override
-    public List<BookingSegment> createBookingSegments(Booking booking, List<BookingRequest.Segment> segments) {
+    public Set<BookingSegment> createBookingSegments(Booking booking, List<BookingRequest.Segment> segments) {
 
-        List<BookingSegment> bookingSegments = new ArrayList<>();
+        Set<BookingSegment> bookingSegments = new HashSet<>();
 
         for (BookingRequest.Segment seg : segments) {
             Flight flight = flightRepo.findFlightByParameters(

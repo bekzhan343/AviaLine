@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface PassengerService {
 
-    List<Passenger> createPassenger(Booking booking, BookingRequest request, List<BookingSegment> bookingSegments);
+    Set<Passenger> createPassenger(Booking booking, BookingRequest request, Set<BookingSegment> bookingSegments);
 
     List<Passenger> getPassengers(List<Booking> booking);
 

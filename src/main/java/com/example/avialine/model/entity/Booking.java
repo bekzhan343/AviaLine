@@ -58,10 +58,10 @@ public class Booking {
 
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BookingSegment> bookingSegments;
+    private Set<BookingSegment> bookingSegments;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Passenger> passengers;
+    private Set<Passenger> passengers;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

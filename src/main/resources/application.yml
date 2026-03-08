@@ -62,6 +62,7 @@ end:
     avia-infant: /add-infant
     avia-pnr-version: /pnr-version/
     avia-refund-quote: /refund/quote
+    avia-manage-booking: /manage/booking
 
     base: /base
     base-countries: /api/countries/

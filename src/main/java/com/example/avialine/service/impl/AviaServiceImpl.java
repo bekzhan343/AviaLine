@@ -176,10 +176,10 @@ public class AviaServiceImpl implements AviaService {
 
         Booking booking = bookingService.createBooking(request, user);
 
-        List<BookingSegment> bookingSegments = bookingSegmentService.createBookingSegments(booking, request.getSegments());
+        Set<BookingSegment> bookingSegments = bookingSegmentService.createBookingSegments(booking, request.getSegments());
         booking.setBookingSegments(bookingSegments);
 
-        List<Passenger> passengers = passengerService.createPassenger(booking, request, bookingSegments);
+        Set<Passenger> passengers = passengerService.createPassenger(booking, request, bookingSegments);
         booking.setPassengers(passengers);
 
         Booking savedBooking = bookingRepo.save(booking);
@@ -204,8 +204,8 @@ public class AviaServiceImpl implements AviaService {
     public BookingInfoResponse detailBooking(RegnumSurnameRequest request) {
 
         Booking booking = bookingService.getBookingBySurnameAndPnr(request.getSurname(), request.getRegnum());
-        List<Passenger> passengers = booking.getPassengers();
-        List<BookingSegment> bookingSegments = booking.getBookingSegments();
+        Set<Passenger> passengers = booking.getPassengers();
+        Set<BookingSegment> bookingSegments = booking.getBookingSegments();
 
         boolean moreInfo = request.isMoreInfo();
         boolean commonStatus = request.isAddCommonStatus();
@@ -450,6 +450,42 @@ public class AviaServiceImpl implements AviaService {
     @Override
     public RefundQuoteResponse refundQuote(RefundQuoteRequest request) {
         return refundService.refundQuote(request);
+    }
+
+    @Override
+    public ManageBookingResponse manageBooking(ManageBookingRequest request) {
+
+        Booking booking = bookingRepo.findBookingWithPassengerAndSegmentsAndOrder(request.getSurname(), request.getRegnum())
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_BY_PNR.getMessage()));
+
+        Set<ManageBookingResponse.ManageSegments> segments = booking.getBookingSegments().stream()
+                .map(dtoMapper::toManageSegments)
+                .collect(Collectors.toSet());
+
+        Set<ManageBookingResponse.ManagePassenger> passengers = booking.getPassengers().stream()
+                .map(dtoMapper::toManagePassenger)
+                .collect(Collectors.toSet());
+
+        BigDecimal total = booking.getOrder().getPrice().multiply(BigDecimal.valueOf(booking.getOrder().getPassengerCount()));
+
+        ManageBookingResponse.Price price = ManageBookingResponse.Price.builder()
+                .totalPrice(total)
+                .status(booking.getOrder().getStatus())
+                .build();
+
+        ManageBookingResponse.Contact contact = ManageBookingResponse.Contact
+                .builder()
+                .email(booking.getEmail())
+                .phone(booking.getPhoneNumber())
+                .build();
+
+        return ManageBookingResponse.builder()
+                .regnum(booking.getPnrNumber())
+                .segments(segments)
+                .passengers(passengers)
+                .price(price)
+                .contact(contact)
+                .build();
     }
 
     @Override

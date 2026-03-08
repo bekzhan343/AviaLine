@@ -33,4 +33,17 @@ public interface BookingRepo extends JpaRepository<Booking, Integer> {
 
     Optional<Booking> getBookingByPnrNumber(String pnr);
 
+
+    @Query("""
+    SELECT b FROM Booking b
+    JOIN FETCH b.passengers ps
+    JOIN FETCH b.bookingSegments bs
+    JOIN FETCH b.order o
+    WHERE ps.surname = :surname
+    AND b.pnrNumber = :regnum
+    AND o.regnum = :regnum
+""")
+    Optional<Booking> findBookingWithPassengerAndSegmentsAndOrder(@Param("surname") String surname,
+                                                                  @Param("regnum") String regnum);
+
 }

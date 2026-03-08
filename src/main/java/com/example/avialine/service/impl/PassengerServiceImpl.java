@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -31,11 +28,16 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepo passengerRepo;
 
     @Override
-    public List<Passenger> createPassenger(Booking booking, BookingRequest request, List<BookingSegment> bookingSegments) {
+    public Set<Passenger> createPassenger(Booking booking, BookingRequest request, Set<BookingSegment> bookingSegments) {
 
         Map<String, List<String>> errors = new HashMap<>();
-        List<Passenger> passengers = new ArrayList<>();
+        Set<Passenger> passengers = new HashSet<>();
         List<BookingRequest.BookingPassenger> requestPassengers = request.getPassengers();
+
+        LocalDate lastSegmentDate = bookingSegments.stream()
+                .map(BookingSegment::getDate)
+                .max(Comparator.naturalOrder())
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_BY_PNR.getMessage()));
 
         for (BookingRequest.BookingPassenger bPassenger : requestPassengers) {
 
@@ -44,32 +46,32 @@ public class PassengerServiceImpl implements PassengerService {
             LocalDate date = request.getSegments().getLast().getDate();
             int age = Period.between(bPassenger.getBirthDate(), date).getYears();
 
-            switch (category){
+            switch (category) {
                 case INF -> {
                     if (age >= 2) {
                         errors.put("Invalid age!", List.of(ApiErrorMessage.INF_AGE_ERROR_MESSAGE.getMessage()));
-                        throw new ValidationException("Error:", errors); }
+                        throw new ValidationException("Error:", errors);
+                    }
                 }
                 case CHD -> {
                     if (age < 2 || age >= 12) {
                         errors.put("Invalid age!", List.of(ApiErrorMessage.CHD_AGE_ERROR_MESSAGE.getMessage()));
-                        throw new ValidationException("Error:", errors); }
+                        throw new ValidationException("Error:", errors);
+                    }
                 }
-
                 case ADT -> {
                     if (age < 12) {
                         errors.put("Invalid age!", List.of(ApiErrorMessage.ADT_AGE_ERROR_MESSAGE.getMessage()));
                         throw new ValidationException("Error:", errors);
                     }
                 }
-
                 default -> {
                     errors.put("Unknown category: ", List.of(bPassenger.getCategory()));
                     throw new ValidationException("Error:", errors);
                 }
             }
 
-            if (bPassenger.getPspexpire().isBefore(bookingSegments.getLast().getDate().plusMonths(6))){
+            if (bPassenger.getPspexpire().isBefore(lastSegmentDate.plusMonths(6))) {
                 errors.put("Invalid passport expiry!", List.of(ApiErrorMessage.PSP_EXPIRE_ERROR_MESSAGE.getMessage()));
                 throw new ValidationException("error:", errors);
             }

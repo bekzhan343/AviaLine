@@ -37,5 +37,7 @@ public interface AviaService {
     PnrVersionResponse getPnrVersion(RegnumRequest request);
 
     RefundQuoteResponse refundQuote(@NotNull RefundQuoteRequest request);
+
+    ManageBookingResponse manageBooking(ManageBookingRequest request);
 }
 

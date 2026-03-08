@@ -6,6 +6,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -52,10 +53,10 @@ public class Airport {
     }
 
     @OneToMany(mappedBy = "airportTo")
-    private List<PopularDirectory> departures;
+    private Set<PopularDirectory> departures;
 
     @OneToMany(mappedBy = "airportFrom")
-    private List<PopularDirectory> arrivals;
+    private Set<PopularDirectory> arrivals;
 }
 
 

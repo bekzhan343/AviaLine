@@ -3,6 +3,7 @@ package com.example.avialine.mapper;
 import com.example.avialine.dto.*;
 import com.example.avialine.dto.response.*;
 import com.example.avialine.dto.PopularDirectDTO;
+import com.example.avialine.enums.PaxCode;
 import com.example.avialine.model.entity.*;
 import org.springframework.stereotype.Component;
 
@@ -216,6 +217,26 @@ public class DTOMapper {
                 .arrival(segment.getArrival())
                 .date(segment.getDate().toString())
                 .subclass(segment.getSubclass())
+                .build();
+    }
+
+    public ManageBookingResponse.ManageSegments toManageSegments(BookingSegment segment) {
+        return ManageBookingResponse.ManageSegments.builder()
+                .company(segment.getCompany())
+                .flight(Integer.valueOf(segment.getFlight()))
+                .departure(segment.getDeparture())
+                .arrival(segment.getArrival())
+                .date(segment.getDate())
+                .build();
+    }
+
+    public ManageBookingResponse.ManagePassenger toManagePassenger(Passenger passenger) {
+        return ManageBookingResponse.ManagePassenger
+                .builder()
+                .fullName(passenger.getFirstname() + " " + passenger.getSurname() + " " + passenger.getLastname())
+                .category(passenger.getCategory().toString())
+                .sex(passenger.getSex())
+                .birthdate(passenger.getBirthdate())
                 .build();
     }
 }

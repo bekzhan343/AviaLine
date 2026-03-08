@@ -178,4 +178,17 @@ public class AviaController {
             );
         }
     }
+
+    @PostMapping("${end.point.avia-manage-booking}")
+    public ResponseEntity<?> manageBooking(@Valid @RequestBody ManageBookingRequest request){
+        try {
+            return ResponseEntity.status(200).body(
+                    aviaService.manageBooking(request)
+            );
+        }catch (DataNotFoundException e){
+            return ResponseEntity.status(404).body(
+                    new DetailErrorResponse(e.getMessage())
+            );
+        }
+    }
 }
