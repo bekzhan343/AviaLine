@@ -42,7 +42,7 @@ spring:
       com.AviaLine: debug
 
 server:
-  port: 8172
+  port: 8173
 
 end:
   point:
