@@ -22,8 +22,8 @@ public class Payment {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "booking_id")
-    private Booking booking;
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     @Column(name = "amount", precision =  10, scale = 2, nullable = false)
     private BigDecimal amount;

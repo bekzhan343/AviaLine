@@ -74,7 +74,7 @@ public class RefundServiceImpl implements RefundService {
         for (Passenger passenger : passengers) {
 
             // Цена на одного пассажира
-            BigDecimal passengerPrice = order.getPrice()
+            BigDecimal passengerPrice = order.getTotalAmount()
                     .divide(BigDecimal.valueOf(order.getPassengerCount()), 2, RoundingMode.HALF_UP);
 
             // Штраф и сумма возврата

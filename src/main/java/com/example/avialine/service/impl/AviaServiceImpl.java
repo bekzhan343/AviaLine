@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -302,7 +303,7 @@ public class AviaServiceImpl implements AviaService {
                             .regnum(order.getRegnum())
                             .email(order.getBooking().getEmail())
                             .status(order.getStatus().toString())
-                            .price(order.getPrice().toString())
+                            .price(order.getTotalAmount().toString())
                             .currency(order.getCurrency().toString())
                             .segments(segmentShorts)
                             .passengers(passengerShorts)
@@ -359,14 +360,14 @@ public class AviaServiceImpl implements AviaService {
                 }
         ).toList();
 
-        BigDecimal total = order.getPrice().multiply(BigDecimal.valueOf(passengers.size()));
+
 
         return OrderDTO.builder()
                 .orderId(order.getId())
                 .regnum(order.getRegnum())
                 .email(order.getBooking().getEmail())
                 .status(order.getStatus().toString())
-                .price(total.toString())
+                .price(order.getTotalAmount().toString())
                 .currency(order.getCurrency().toString())
                 .segments(segments)
                 .passengers(passengers)
@@ -425,8 +426,19 @@ public class AviaServiceImpl implements AviaService {
 
         passengerService.addInfant(request, booking, request.getNationality());
 
+
+
+
         Order order = orderService.getOrderByRegnum(request.getRegnum());
+
+        BigDecimal baseFare = order.getBaseFare().multiply(BigDecimal.valueOf(order.getPassengerCount() + 1));
+        BigDecimal taxes = baseFare.multiply(order.getTaxPercentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN));
+        BigDecimal totalAmount = baseFare.add(taxes);
+
         order.setPassengerCount(order.getPassengerCount() + 1);
+        order.setBaseFare(baseFare);
+        order.setTaxes(taxes);
+        order.setTotalAmount(totalAmount);
         orderRepo.save(order);
 
         return new PNRResponse(booking.getPnrNumber(), BookingStatus.CREATED.getStatus());
@@ -437,7 +449,7 @@ public class AviaServiceImpl implements AviaService {
         Booking booking = bookingRepo.getBookingByPnrNumber(request.getRegnum())
                 .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_BY_PNR.getMessage()));
 
-        BookingHistory history = bHistoryRepo.getByBookingId(booking.getId())
+        BookingHistory history = bHistoryRepo.findTopByBookingIdOrderByPnrVersionDesc(booking.getId())
                 .orElseThrow(() -> new  DataNotFoundException(ApiErrorMessage.BOOKING_HISTORY_NOT_FOUND.getMessage()));
 
         return PnrVersionResponse.builder()
@@ -466,7 +478,7 @@ public class AviaServiceImpl implements AviaService {
                 .map(dtoMapper::toManagePassenger)
                 .collect(Collectors.toSet());
 
-        BigDecimal total = booking.getOrder().getPrice().multiply(BigDecimal.valueOf(booking.getOrder().getPassengerCount()));
+        BigDecimal total = booking.getOrder().getTotalAmount();
 
         ManageBookingResponse.Price price = ManageBookingResponse.Price.builder()
                 .totalPrice(total)

@@ -23,8 +23,8 @@ public class Order {
     @Column(name = "regnum", unique = true, nullable = false, length = 6)
     private String regnum;
 
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    @Column(name = "base_fare", nullable = false, precision = 10, scale = 2)
+    private BigDecimal baseFare;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -40,6 +40,18 @@ public class Order {
     @OneToOne
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
+
+    @Builder.Default
+    @Column(name = "tax_percentage", nullable = false, precision = 5, scale = 2)
+    private BigDecimal taxPercentage = new BigDecimal(20);
+
+    @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
+    private BigDecimal totalAmount;
+
+    @Column(name = "taxes", nullable = false, precision = 10, scale = 2)
+    private BigDecimal taxes;
+
+
 
 
 

@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,14 +25,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createOrder(Booking booking) {
 
-        BigDecimal totalPrice = booking.getBookingSegments().stream()
+        BigDecimal baseFare = booking.getBookingSegments().stream()
                 .map(seg -> seg.getSchedule().getPrice())
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .multiply(BigDecimal.valueOf(booking.getPassengers().size()));
 
+
+
         Order order = Order
                 .builder()
-                .price(totalPrice)
+                .baseFare(baseFare)
                 .booking(booking)
                 .currency(booking.getCurrency())
                 .status(OrderStatus.CREATED)
@@ -38,6 +42,11 @@ public class OrderServiceImpl implements OrderService {
                 .passengerCount(booking.getPassengers().size())
                 .build();
 
+        BigDecimal totalTax = baseFare.multiply(order.getTaxPercentage().divide(new BigDecimal(100), 2,  RoundingMode.HALF_UP));
+        BigDecimal totalPrice = baseFare.add(totalTax);
+
+        order.setTaxes(totalTax);
+        order.setTotalAmount(totalPrice);
         return orderRepo.save(order);
     }
 

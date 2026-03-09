@@ -161,7 +161,7 @@ public class ControllerAdvice {
     public ResponseEntity<DetailErrorResponse> errorNullPointerException(NullPointerException e){
         return ResponseEntity.status(404).body(
                 new DetailErrorResponse(
-                        ApiErrorMessage.FAQ_NOT_FOUND_MESSAGE.getMessage()
+                        e.getMessage()
                 )
         );
     }

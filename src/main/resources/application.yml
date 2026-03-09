@@ -47,6 +47,9 @@ server:
 end:
   point:
 
+    payment-base: /payment
+    payment-init: /init/{orderId}
+
     avia-base: /avia
     avia-search-params: /search-params/
     avia-privacy-policy: /privacy-policy
