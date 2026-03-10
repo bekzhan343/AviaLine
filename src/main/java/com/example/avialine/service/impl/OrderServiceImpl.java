@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +74,12 @@ public class OrderServiceImpl implements OrderService {
     public Order getOrderByRegnum(String regnum) {
         return orderRepo.findOrderByRegnum(regnum)
                 .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.ORDER_NOT_FOUND_MESSAGE.getMessage()));
+    }
+
+    @Override
+    public void markAsPendingAndSave(Order order) {
+        order.setStatus(OrderStatus.PENDING);
+        return orderRepo.save(order);
     }
 
 

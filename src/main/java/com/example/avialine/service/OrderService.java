@@ -16,4 +16,7 @@ public interface OrderService {
     Order getOrderById(@NotNull Integer orderId);
 
     Order getOrderByRegnum(@NotNull String regnum);
+
+    void markAsPendingAndSave(@NotNull Order order);
+
 }

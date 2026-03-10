@@ -42,6 +42,9 @@ public class Payment {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "paid_amount", precision =  10, scale = 2)
+    private BigDecimal paidAmount;
+
     @PrePersist
     public void setCreatedAt() {
         this.createdAt = LocalDateTime.now();

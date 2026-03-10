@@ -29,6 +29,7 @@ public enum ApiErrorMessage {
     INVALID_PHONE_FORMAT_MESSAGE("Invalid phone format"),
     INVALID_CODE_MESSAGE("invalid code -> %s !"),
     CODE_ALREADY_VERIFIED_MESSAGE("code already verified!"),
+    PAYMENT_ALREADY_EXISTS_MESSAGE("payment already exists!"),
 
     EXPIRED_CODE_MESSAGE("expired code -> %s !"),
     ERROR_PROCESSING_REQUEST_MESSAGE("error processing request"),
@@ -75,7 +76,9 @@ public enum ApiErrorMessage {
     UNAVAILABLE_ADT_AGE_MESSAGE("Unavailable ADT age -> %s "),
     BOOKING_NOT_FOUND_BY_PNR("Booking not found, please check the pnr number"),
     BOOKING_HISTORY_NOT_FOUND("Booking history not found!"),
-    REFUND_AVAIL_FOR_PAID_MESSAGE("Refund available only for paid orders!");
+    REFUND_AVAIL_FOR_PAID_MESSAGE("Refund available only for paid orders!"),
+    PAYMENT_NOT_FOUND("Payment not found!"),
+    FORBIDDEN_FOR_CREATING_PAYMENT_MESSAGE("Forbidden for creating payment with status: %s ");
 
     private final String message;
 

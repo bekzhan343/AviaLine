@@ -49,6 +49,7 @@ end:
 
     payment-base: /payment
     payment-init: /init/{orderId}
+    payment-status: /status/{paymentId}
 
     avia-base: /avia
     avia-search-params: /search-params/

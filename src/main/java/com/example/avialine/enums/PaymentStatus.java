@@ -4,8 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum PaymentStatus {
-
-    PAID,
-    CANCELLED,
-    PENDING
+    PENDING,    // создан
+    PAID,       // оплачен
+    FAILED,     // не прошёл
+    CANCELLED,  // отменён
+    REFUNDED    // возврат
 }

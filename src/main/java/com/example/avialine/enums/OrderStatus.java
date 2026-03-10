@@ -16,7 +16,8 @@ public enum OrderStatus {
     ISSUED,
     REFUNDED,
     EXPIRED,
-    CONFIRMED;
+    CONFIRMED,
+    PARTIALLY_PAID;
 
     private String value;
 }
