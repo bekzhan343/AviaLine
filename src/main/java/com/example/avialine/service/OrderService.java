@@ -19,4 +19,6 @@ public interface OrderService {
 
     void markAsPendingAndSave(@NotNull Order order);
 
+    void markAsPaidAndSave(@NotNull Order order);
+
 }

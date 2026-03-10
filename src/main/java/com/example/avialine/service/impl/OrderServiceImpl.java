@@ -79,8 +79,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void markAsPendingAndSave(Order order) {
         order.setStatus(OrderStatus.PENDING);
-        return orderRepo.save(order);
+        orderRepo.save(order);
     }
 
 
+    @Override
+    public void markAsPaidAndSave(Order order) {
+        order.setStatus(OrderStatus.PAID);
+        orderRepo.save(order);
+    }
 }

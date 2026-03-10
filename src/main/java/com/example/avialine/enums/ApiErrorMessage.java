@@ -78,7 +78,8 @@ public enum ApiErrorMessage {
     BOOKING_HISTORY_NOT_FOUND("Booking history not found!"),
     REFUND_AVAIL_FOR_PAID_MESSAGE("Refund available only for paid orders!"),
     PAYMENT_NOT_FOUND("Payment not found!"),
-    FORBIDDEN_FOR_CREATING_PAYMENT_MESSAGE("Forbidden for creating payment with status: %s ");
+    FORBIDDEN_FOR_CREATING_PAYMENT_MESSAGE("Forbidden for creating payment with status: %s "),
+    FORBIDDEN_FOR_PAY_MESSAGE("Forbidden for paying the payment with status: %s ");
 
     private final String message;
 
