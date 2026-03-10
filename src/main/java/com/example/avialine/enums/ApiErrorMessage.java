@@ -79,7 +79,8 @@ public enum ApiErrorMessage {
     REFUND_AVAIL_FOR_PAID_MESSAGE("Refund available only for paid orders!"),
     PAYMENT_NOT_FOUND("Payment not found!"),
     FORBIDDEN_FOR_CREATING_PAYMENT_MESSAGE("Forbidden for creating payment with status: %s "),
-    FORBIDDEN_FOR_PAY_MESSAGE("Forbidden for paying the payment with status: %s ");
+    FORBIDDEN_FOR_PAY_MESSAGE("Forbidden for paying the payment with status: %s "),
+    RETRY_NOT_AVAIL_STATUS_MESSAGE("Retry not available for status %s");
 
     private final String message;
 

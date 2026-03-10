@@ -17,8 +17,14 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @GetMapping("${end.point.payment-init}")
-    public ResponseEntity<PaymentInitResponse> initPayment(@PathVariable("orderId") Integer orderId) {
-        return ResponseEntity.status(200).body(paymentService.initPayment(orderId));
+    public ResponseEntity<?> initPayment(@PathVariable("orderId") Integer orderId) {
+        try {
+            return ResponseEntity.status(200).body(paymentService.initPayment(orderId));
+        }catch (IllegalStateException | DataNotFoundException e) {
+            return ResponseEntity.status(404).body(
+                    new DetailErrorResponse(e.getMessage())
+            );
+        }
     }
 
     @GetMapping("${end.point.payment-status}")
@@ -35,6 +41,15 @@ public class PaymentController {
         try {
             return ResponseEntity.status(200).body(paymentService.pay(paymentId));
         }catch (DataNotFoundException | IllegalStateException e){
+            return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
+        }
+    }
+
+    @GetMapping("${end.point.payment-retry}")
+    public ResponseEntity<?> retry(@PathVariable("paymentId") Integer paymentId) {
+        try {
+            return ResponseEntity.status(200).body(paymentService.retry(paymentId));
+        }catch (IllegalStateException | DataNotFoundException e){
             return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
         }
     }

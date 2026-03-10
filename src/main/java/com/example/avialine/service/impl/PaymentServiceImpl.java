@@ -100,4 +100,33 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
     }
 
+    @Override
+    public PayResponse retry(Integer paymentId) {
+
+        Payment payment = paymentRepo.findById(paymentId)
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.PAYMENT_NOT_FOUND.getMessage()));
+
+        if (!payment.getPaymentStatus().equals(PaymentStatus.FAILED)) {
+            throw new IllegalStateException(ApiErrorMessage.RETRY_NOT_AVAIL_STATUS_MESSAGE.getMessage(payment.getPaymentStatus()));
+        }
+
+        boolean success = mockGatewayService.process(payment);
+
+        if (success){
+            payment.setPaymentStatus(PaymentStatus.PAID);
+            payment.setPaidAmount(payment.getAmount());
+        }else {
+            payment.setPaymentStatus(PaymentStatus.FAILED);
+        }
+
+        paymentRepo.save(payment);
+
+        return PayResponse.builder()
+                .paymentId(paymentId)
+                .status(payment.getPaymentStatus())
+                .amount(payment.getAmount())
+                .paidAmount(payment.getPaidAmount())
+                .build();
+    }
+
 }

@@ -11,4 +11,6 @@ public interface PaymentService {
     PaymentStatusResponse paymentStatus(Integer paymentId);
 
     PayResponse pay(Integer paymentId);
+
+    PayResponse retry(Integer paymentId);
 }
