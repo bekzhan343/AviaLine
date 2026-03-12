@@ -3,28 +3,31 @@ package com.example.avialine.service.impl;
 import com.example.avialine.dto.response.*;
 import com.example.avialine.enums.*;
 import com.example.avialine.exception.DataNotFoundException;
+import com.example.avialine.mapper.DTOMapper;
 import com.example.avialine.model.entity.Order;
 import com.example.avialine.model.entity.Payment;
 import com.example.avialine.repo.PaymentRepo;
 import com.example.avialine.repo.ReceiptRepo;
 import com.example.avialine.service.*;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@Transactional
 @AllArgsConstructor
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
     private final OrderService orderService;
     private final PaymentRepo paymentRepo;
-    private final ReceiptRepo receiptRepo;
     private final MockGatewayService mockGatewayService;
     private final BookingService bookingService;
+    private final DTOMapper dtoMapper;
 
-    @Transactional
     @Override
     public PaymentInitResponse initPayment(Integer orderId) {
 
@@ -58,6 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public PaymentStatusResponse paymentStatus(Integer orderId) {
 
@@ -66,6 +70,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         return PaymentStatusResponse.builder().paymentStatus(payment.getPaymentStatus().toString()).build();
     }
+
 
     @Override
     public PayResponse pay(Integer paymentId) {
@@ -170,6 +175,26 @@ public class PaymentServiceImpl implements PaymentService {
                 .paymentId(payment.getId())
                 .message(ApiMessage.PAYMENT_REFUND_SUCCESS.getMessage(payment.getPaidAmount()) + payment.getCurrency())
                 .paymentStatus(payment.getPaymentStatus())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public GetPaymentsResponse getPayments(Integer orderId) {
+
+        Set<Payment> payments = paymentRepo.getPaymentsByOrderId(orderId);
+
+        if (payments.isEmpty()){
+            throw new DataNotFoundException(ApiErrorMessage.PAYMENTS_NOT_FOUND.getMessage());
+        }
+        Set<GetPaymentsResponse.PaymentsResponse> response = payments
+                .stream()
+                .map(dtoMapper::toPaymentsResponse)
+                .collect(Collectors.toSet());
+
+        return GetPaymentsResponse.builder()
+                .orderId(orderId)
+                .payments(response)
                 .build();
     }
 

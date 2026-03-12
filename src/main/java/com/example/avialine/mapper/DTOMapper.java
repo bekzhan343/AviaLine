@@ -239,4 +239,14 @@ public class DTOMapper {
                 .birthdate(passenger.getBirthdate())
                 .build();
     }
+
+    public GetPaymentsResponse.PaymentsResponse toPaymentsResponse(Payment payment) {
+        return GetPaymentsResponse.PaymentsResponse.builder()
+                .paymentId(payment.getId())
+                .paymentStatus(payment.getPaymentStatus())
+                .amount(payment.getAmount())
+                .paidAmount(payment.getPaidAmount())
+                .status(payment.getPaymentStatus())
+                .build();
+    }
 }

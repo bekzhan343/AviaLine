@@ -15,4 +15,6 @@ public interface PaymentService {
     PayCancelResponse cancel(Integer paymentId);
 
     PayRefundResponse refund(Integer paymentId);
+
+    GetPaymentsResponse getPayments(Integer orderId);
 }

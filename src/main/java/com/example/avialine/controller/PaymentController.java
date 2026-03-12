@@ -1,8 +1,6 @@
 package com.example.avialine.controller;
 
 import com.example.avialine.dto.response.DetailErrorResponse;
-import com.example.avialine.dto.response.PaymentInitResponse;
-import com.example.avialine.dto.response.PaymentStatusResponse;
 import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.service.PaymentService;
 import lombok.AllArgsConstructor;
@@ -16,14 +14,12 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @GetMapping("${end.point.payment-init}")
+    @PostMapping("${end.point.payment-init}")
     public ResponseEntity<?> initPayment(@PathVariable("orderId") Integer orderId) {
         try {
             return ResponseEntity.status(200).body(paymentService.initPayment(orderId));
-        }catch (IllegalStateException | DataNotFoundException e) {
-            return ResponseEntity.status(404).body(
-                    new DetailErrorResponse(e.getMessage())
-            );
+        } catch (IllegalStateException | DataNotFoundException e) {
+            return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
         }
     }
 
@@ -31,45 +27,53 @@ public class PaymentController {
     public ResponseEntity<?> getPaymentStatus(@PathVariable("paymentId") Integer paymentId) {
         try {
             return ResponseEntity.status(200).body(paymentService.paymentStatus(paymentId));
-        }catch (DataNotFoundException e){
+        } catch (DataNotFoundException e) {
             return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
         }
     }
 
-    @GetMapping("${end.point.payment-pay}")
+    @PostMapping("${end.point.payment-pay}")
     public ResponseEntity<?> pay(@PathVariable("paymentId") Integer paymentId) {
         try {
             return ResponseEntity.status(200).body(paymentService.pay(paymentId));
-        }catch (DataNotFoundException | IllegalStateException e){
+        } catch (DataNotFoundException | IllegalStateException e) {
             return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
         }
     }
 
-    @GetMapping("${end.point.payment-retry}")
+    @PostMapping("${end.point.payment-retry}")
     public ResponseEntity<?> retry(@PathVariable("paymentId") Integer paymentId) {
         try {
             return ResponseEntity.status(200).body(paymentService.retry(paymentId));
-        }catch (IllegalStateException | DataNotFoundException e){
+        } catch (IllegalStateException | DataNotFoundException e) {
             return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
         }
     }
 
-    @GetMapping("${end.point.payment-cancel}")
+    @PostMapping("${end.point.payment-cancel}")
     public ResponseEntity<?> cancel(@PathVariable("paymentId") Integer paymentId) {
         try {
             return ResponseEntity.status(200).body(paymentService.cancel(paymentId));
-        }catch (IllegalStateException | DataNotFoundException e){
+        } catch (IllegalStateException | DataNotFoundException e) {
             return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
         }
     }
 
-    @GetMapping("${end.point.payment-refund}")
-    public ResponseEntity<?> getPayments(@PathVariable("paymentId") Integer paymentId) {
+    @PostMapping("${end.point.payment-refund}")
+    public ResponseEntity<?> refund(@PathVariable("paymentId") Integer paymentId) {
         try {
             return ResponseEntity.status(200).body(paymentService.refund(paymentId));
-        }catch (IllegalStateException | DataNotFoundException e){
+        } catch (IllegalStateException | DataNotFoundException e) {
             return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
         }
     }
 
+    @GetMapping("${end.point.payment-get-all}")
+    public ResponseEntity<?> getPayments(@PathVariable("orderId") Integer orderId) {
+        try {
+            return ResponseEntity.status(200).body(paymentService.getPayments(orderId));
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
+        }
+    }
 }

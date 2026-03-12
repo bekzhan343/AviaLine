@@ -51,8 +51,6 @@ public class AuthServiceImpl implements AuthService {
     private final EmailService emailService;
     private final UserService userService;
 
-    private final String ROLE_USER = "ROLE_USER";
-
     @Transactional
     @Override
     public UserProfileDTO login(@NotNull LoginRequest loginRequest) {
@@ -126,6 +124,7 @@ public class AuthServiceImpl implements AuthService {
         return new DefaultResponse(true, ApiMessage.VERIFICATION_CODE_SENT_MESSAGE.getMessage());
     }
 
+    @Transactional
     @Override
     public ConfirmCodeResponse confirmVerificationCode(@NotNull ConfirmCodeRequest request) {
 
@@ -157,13 +156,12 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
+    @Transactional
     @Override
     public void deleteUser() {
         Authentication auth = SecurityUtil.requireAuthentication();
 
         String phone = auth.getName();
-
-        log.info("phone: " + phone);
 
         User user = userService.getUserByPhone(phone);
 
@@ -185,6 +183,7 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
+
     @Override
     public PersonInfoResponse getPersonalInfo() {
 
@@ -201,6 +200,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    @Transactional
     @Override
     public DefaultResponse forgotPassword(@NotNull ForgotPasswordSerializers request){
 
@@ -297,7 +297,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-    private String saveRefreshTokenInDB(@NotNull String refreshStr, User user){
+    @Transactional
+    private void saveRefreshTokenInDB(@NotNull String refreshStr, User user){
         refreshTokenRepo
                 .findByUserAndRevokedFalse(user)
                         .ifPresent(token -> {
@@ -313,8 +314,7 @@ public class AuthServiceImpl implements AuthService {
                 .expiryDate(Instant.now().plusMillis(refreshTokenExpiration))
                 .build();
 
-        RefreshToken savedToken = refreshTokenRepo.save(token);
-        return savedToken.getToken();
+        refreshTokenRepo.save(token);
     }
 
 

@@ -54,6 +54,7 @@ end:
     payment-retry: /retry/{paymentId}
     payment-cancel: /cancel/{paymentId}
     payment-refund: /refund/{paymentId}
+    payment-get-all: /history/{orderId}
 
     avia-base: /avia
     avia-search-params: /search-params/
