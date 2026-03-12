@@ -1,19 +1,16 @@
 package com.example.avialine.service.impl;
 
+import com.example.avialine.dto.response.PayCancelResponse;
 import com.example.avialine.dto.response.PayResponse;
 import com.example.avialine.dto.response.PaymentInitResponse;
 import com.example.avialine.dto.response.PaymentStatusResponse;
-import com.example.avialine.enums.ApiErrorMessage;
-import com.example.avialine.enums.OrderStatus;
-import com.example.avialine.enums.PaymentStatus;
+import com.example.avialine.enums.*;
 import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.model.entity.Order;
 import com.example.avialine.model.entity.Payment;
 import com.example.avialine.repo.PaymentRepo;
 import com.example.avialine.repo.ReceiptRepo;
-import com.example.avialine.service.MockGatewayService;
-import com.example.avialine.service.OrderService;
-import com.example.avialine.service.PaymentService;
+import com.example.avialine.service.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +23,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepo paymentRepo;
     private final ReceiptRepo receiptRepo;
     private final MockGatewayService mockGatewayService;
+    private final BookingService bookingService;
 
     @Transactional
     @Override
@@ -126,6 +124,29 @@ public class PaymentServiceImpl implements PaymentService {
                 .status(payment.getPaymentStatus())
                 .amount(payment.getAmount())
                 .paidAmount(payment.getPaidAmount())
+                .build();
+    }
+
+    @Override
+    public PayCancelResponse cancel(Integer paymentId) {
+
+        Payment payment = paymentRepo.findById(paymentId)
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.PAYMENT_NOT_FOUND.getMessage()));
+
+        if (payment.getPaymentStatus() != PaymentStatus.PENDING && payment.getPaymentStatus() !=(PaymentStatus.FAILED))  {
+            throw new IllegalStateException(ApiErrorMessage.CANCEL_NOT_AVAIL_STATUS_MESSAGE.getMessage(payment.getPaymentStatus()));
+        }
+
+        payment.setPaymentStatus(PaymentStatus.CANCELLED);
+
+        paymentRepo.save(payment);
+        orderService.markAsCancelledAndSave(payment.getOrder());
+        bookingService.markAsCancelledAndSave(payment.getOrder().getBooking());
+
+        return PayCancelResponse.builder()
+                .paymentId(payment.getId())
+                .message(ApiMessage.PAYMENT_CANCELLED.getMessage())
+                .paymentStatus(payment.getPaymentStatus())
                 .build();
     }
 

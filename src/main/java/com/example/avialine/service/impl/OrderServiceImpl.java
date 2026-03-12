@@ -88,4 +88,10 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.PAID);
         orderRepo.save(order);
     }
+
+    @Override
+    public void markAsCancelledAndSave(Order order) {
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepo.save(order);
+    }
 }

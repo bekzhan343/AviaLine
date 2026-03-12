@@ -13,7 +13,8 @@ public enum ApiMessage {
     LOGOUT_DONE_MESSAGE("you have been logged out!"),
     PERSON_INFO_MODIFIED_MESSAGE("you successfully modified your personal info successfully !"),
     BOOKING_CREATED_COMMENT("booking has been created, the regnum %s "),
-    ADDED_INFANT_MESSAGE("you successfully added infant to the booking with regnum %s ");
+    ADDED_INFANT_MESSAGE("you successfully added infant to the booking with regnum %s "),
+    PAYMENT_CANCELLED("payment cancelled");
 
     private final String message;
 

@@ -54,4 +54,13 @@ public class PaymentController {
         }
     }
 
+    @GetMapping("${end.point.payment-cancel}")
+    public ResponseEntity<?> cancel(@PathVariable("paymentId") Integer paymentId) {
+        try {
+            return ResponseEntity.status(200).body(paymentService.cancel(paymentId));
+        }catch (IllegalStateException | DataNotFoundException e){
+            return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
+        }
+    }
+
 }

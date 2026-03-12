@@ -21,4 +21,6 @@ public interface OrderService {
 
     void markAsPaidAndSave(@NotNull Order order);
 
+    void markAsCancelledAndSave(@NotNull Order order);
+
 }

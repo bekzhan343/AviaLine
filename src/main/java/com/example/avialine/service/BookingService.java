@@ -4,6 +4,7 @@ package com.example.avialine.service;
 import com.example.avialine.dto.request.BookingRequest;
 import com.example.avialine.model.entity.Booking;
 import com.example.avialine.model.entity.User;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,6 @@ public interface BookingService {
 
     List<Booking> getByUser(User user);
 
-
+    void markAsCancelledAndSave(@NotNull Booking booking);
 
 }
