@@ -11,7 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PayCancelResponse implements Serializable {
+public class PayRefundResponse implements Serializable {
 
     @JsonProperty("payment_id")
     private Integer paymentId;

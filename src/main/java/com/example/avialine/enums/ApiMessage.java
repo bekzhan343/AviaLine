@@ -14,7 +14,8 @@ public enum ApiMessage {
     PERSON_INFO_MODIFIED_MESSAGE("you successfully modified your personal info successfully !"),
     BOOKING_CREATED_COMMENT("booking has been created, the regnum %s "),
     ADDED_INFANT_MESSAGE("you successfully added infant to the booking with regnum %s "),
-    PAYMENT_CANCELLED("payment cancelled");
+    PAYMENT_CANCELLED("payment cancelled"),
+    PAYMENT_REFUND_SUCCESS("payment refund successfully, non-refunded amount: %s ");
 
     private final String message;
 

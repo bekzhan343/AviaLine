@@ -20,4 +20,5 @@ public interface BookingService {
 
     void markAsCancelledAndSave(@NotNull Booking booking);
 
+    void markAsRefundAndSave(@NotNull Booking booking);
 }

@@ -63,4 +63,13 @@ public class PaymentController {
         }
     }
 
+    @GetMapping("${end.point.payment-refund}")
+    public ResponseEntity<?> getPayments(@PathVariable("paymentId") Integer paymentId) {
+        try {
+            return ResponseEntity.status(200).body(paymentService.refund(paymentId));
+        }catch (IllegalStateException | DataNotFoundException e){
+            return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
+        }
+    }
+
 }

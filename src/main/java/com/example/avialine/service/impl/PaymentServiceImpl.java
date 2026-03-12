@@ -1,9 +1,6 @@
 package com.example.avialine.service.impl;
 
-import com.example.avialine.dto.response.PayCancelResponse;
-import com.example.avialine.dto.response.PayResponse;
-import com.example.avialine.dto.response.PaymentInitResponse;
-import com.example.avialine.dto.response.PaymentStatusResponse;
+import com.example.avialine.dto.response.*;
 import com.example.avialine.enums.*;
 import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.model.entity.Order;
@@ -14,6 +11,8 @@ import com.example.avialine.service.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @AllArgsConstructor
 @Service
@@ -146,6 +145,30 @@ public class PaymentServiceImpl implements PaymentService {
         return PayCancelResponse.builder()
                 .paymentId(payment.getId())
                 .message(ApiMessage.PAYMENT_CANCELLED.getMessage())
+                .paymentStatus(payment.getPaymentStatus())
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public PayRefundResponse refund(Integer paymentId) {
+
+        Payment payment = paymentRepo.findById(paymentId)
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.PAYMENT_NOT_FOUND.getMessage()));
+
+        if (payment.getPaymentStatus() != PaymentStatus.PAID){
+            throw new IllegalStateException(ApiErrorMessage.REFUND_NOT_AVAIL_STATUS_MESSAGE.getMessage(payment.getPaymentStatus()));
+        }
+
+        payment.setPaymentStatus(PaymentStatus.REFUNDED);
+        payment.setPaidAmount(BigDecimal.valueOf(0));
+
+        orderService.markAsRefundAndSave(payment.getOrder());
+        bookingService.markAsRefundAndSave(payment.getOrder().getBooking());
+
+        return PayRefundResponse.builder()
+                .paymentId(payment.getId())
+                .message(ApiMessage.PAYMENT_REFUND_SUCCESS.getMessage(payment.getPaidAmount()) + payment.getCurrency())
                 .paymentStatus(payment.getPaymentStatus())
                 .build();
     }

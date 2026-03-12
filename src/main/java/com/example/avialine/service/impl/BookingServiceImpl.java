@@ -67,6 +67,12 @@ public class BookingServiceImpl implements BookingService {
         bookingRepo.save(booking);
     }
 
+    @Override
+    public void markAsRefundAndSave(Booking booking) {
+        booking.setStatus(BookingStatus.REFUNDED);
+        bookingRepo.save(booking);
+    }
+
     private String generatePnr(){
         String chars = "0123456789QWERTYUIOPASDFGHJKLZXCVBNM";
         StringBuilder sb = new StringBuilder();

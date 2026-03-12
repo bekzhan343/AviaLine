@@ -94,4 +94,10 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         orderRepo.save(order);
     }
+
+    @Override
+    public void markAsRefundAndSave(Order order) {
+        order.setStatus(OrderStatus.REFUNDED);
+        orderRepo.save(order);
+    }
 }

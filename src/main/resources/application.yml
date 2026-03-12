@@ -53,6 +53,7 @@ end:
     payment-pay: /pay/{paymentId}
     payment-retry: /retry/{paymentId}
     payment-cancel: /cancel/{paymentId}
+    payment-refund: /refund/{paymentId}
 
     avia-base: /avia
     avia-search-params: /search-params/

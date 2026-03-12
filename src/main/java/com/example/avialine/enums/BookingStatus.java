@@ -11,7 +11,8 @@ public enum BookingStatus {
 
     CREATED("CREATED"),
     CANCELLED("CANCELLED"),
-    PAID("PAID");
+    PAID("PAID"),
+    REFUNDED("REFUNDED");
 
     private String status;
 
