@@ -49,7 +49,6 @@ public class AviaServiceImpl implements AviaService {
     private final DocRepo docRepo;
     private final BookingHistoryRepo bHistoryRepo;
     private final OrderRepo orderRepo;
-    private final RefundService refundService;
 
     @Override
     public Set<SearchParamsResponse> getCountryDetail() {
@@ -457,11 +456,6 @@ public class AviaServiceImpl implements AviaService {
                 .changeType(ChangeType.valueOf(history.getChangeType()).toString())
                 .comment(history.getComment())
                 .build();
-    }
-
-    @Override
-    public RefundQuoteResponse refundQuote(RefundQuoteRequest request) {
-        return refundService.refundQuote(request);
     }
 
     @Override

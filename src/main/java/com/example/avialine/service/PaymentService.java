@@ -1,5 +1,6 @@
 package com.example.avialine.service;
 
+import com.example.avialine.dto.request.RefundQuoteRequest;
 import com.example.avialine.dto.response.*;
 
 public interface PaymentService {
@@ -14,7 +15,7 @@ public interface PaymentService {
 
     PayCancelResponse cancel(Integer paymentId);
 
-    PayRefundResponse refund(Integer paymentId);
+    RefundQuoteResponse refundQuote(RefundQuoteRequest request);
 
     GetPaymentsByOrderIdResponse getPaymentsByOrderId(Integer orderId);
 

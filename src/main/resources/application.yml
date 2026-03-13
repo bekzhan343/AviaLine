@@ -53,7 +53,7 @@ end:
     payment-pay: /pay/{paymentId}
     payment-retry: /retry/{paymentId}
     payment-cancel: /cancel/{paymentId}
-    payment-refund: /refund/{paymentId}
+    payment-refund-quote: /refund/quote
     payment-order-history-by-orderid: /order-history/{orderId}
     payment-orders-history: /order-history/
 
@@ -71,7 +71,6 @@ end:
     avia-order-status: /order/status
     avia-infant: /add-infant
     avia-pnr-version: /pnr-version/
-    avia-refund-quote: /refund/quote
     avia-manage-booking: /manage/booking
 
     base: /base

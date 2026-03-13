@@ -1,8 +1,12 @@
 package com.example.avialine.controller;
 
+import com.example.avialine.dto.request.RefundQuoteRequest;
 import com.example.avialine.dto.response.DetailErrorResponse;
+import com.example.avialine.exception.BadRequestException;
+import com.example.avialine.exception.DataAlreadyExistsException;
 import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.service.PaymentService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,12 +63,20 @@ public class PaymentController {
         }
     }
 
-    @PostMapping("${end.point.payment-refund}")
-    public ResponseEntity<?> refund(@PathVariable("paymentId") Integer paymentId) {
+    @PostMapping("${end.point.payment-refund-quote}")
+    public ResponseEntity<?> refundQuote(@Valid @RequestBody RefundQuoteRequest request) {
         try {
-            return ResponseEntity.status(200).body(paymentService.refund(paymentId));
-        } catch (IllegalStateException | DataNotFoundException e) {
-            return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
+            return ResponseEntity.status(200).body(
+                    paymentService.refundQuote(request)
+            );
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.status(404).body(
+                    new DetailErrorResponse(e.getMessage())
+            );
+        } catch (DataAlreadyExistsException | BadRequestException e) {
+            return ResponseEntity.status(400).body(
+                    new DetailErrorResponse(e.getMessage())
+            );
         }
     }
 

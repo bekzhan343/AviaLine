@@ -1,15 +1,13 @@
 package com.example.avialine.service.impl;
 
+import com.example.avialine.dto.request.RefundQuoteRequest;
 import com.example.avialine.dto.response.*;
 import com.example.avialine.enums.*;
+import com.example.avialine.exception.BadRequestException;
 import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.mapper.DTOMapper;
-import com.example.avialine.model.entity.Booking;
-import com.example.avialine.model.entity.Order;
-import com.example.avialine.model.entity.Payment;
-import com.example.avialine.model.entity.User;
-import com.example.avialine.repo.OrderRepo;
-import com.example.avialine.repo.PaymentRepo;
+import com.example.avialine.model.entity.*;
+import com.example.avialine.repo.*;
 import com.example.avialine.security.util.SecurityUtil;
 import com.example.avialine.service.*;
 import lombok.AllArgsConstructor;
@@ -19,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,6 +35,9 @@ public class PaymentServiceImpl implements PaymentService {
     private final DTOMapper dtoMapper;
     private final UserService userService;
     private final OrderRepo orderRepo;
+    private final RefundRepo refundRepo;
+    private final BookingRepo bookingRepo;
+    private final PassengerRepo passengerRepo;
 
     @Override
     public PaymentInitResponse initPayment(Integer orderId) {
@@ -164,25 +167,100 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional
     @Override
-    public PayRefundResponse refund(Integer paymentId) {
+    public RefundQuoteResponse refundQuote(RefundQuoteRequest request) {
 
-        Payment payment = paymentRepo.findById(paymentId)
-                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.PAYMENT_NOT_FOUND.getMessage()));
+        // 1. Находим бронь по regnum и surname
+        Booking booking = bookingRepo.findByPnrNumberAndSurname(request.getRegnum(), request.getSurname())
+                .orElseThrow(() -> new DataNotFoundException(ApiErrorMessage.BOOKING_NOT_FOUND_BY_PNR.getMessage()));
 
-        if (payment.getPaymentStatus() != PaymentStatus.PAID){
-            throw new IllegalStateException(ApiErrorMessage.REFUND_NOT_AVAIL_STATUS_MESSAGE.getMessage(payment.getPaymentStatus()));
+        Order order = booking.getOrder();
+
+        // 2. Возврат только для оплаченных заказов
+        if (order.getStatus() != OrderStatus.PAID) {
+            throw new BadRequestException(ApiErrorMessage.REFUND_AVAIL_FOR_PAID_MESSAGE.getMessage());
         }
 
-        payment.setPaymentStatus(PaymentStatus.REFUNDED);
-        payment.setPaidAmount(BigDecimal.valueOf(0));
+        // 3. Находим пассажиров
+        List<Passenger> passengers = passengerRepo.findAllById(request.getPassengerIds());
 
-        orderService.markAsRefundAndSave(payment.getOrder());
-        bookingService.markAsRefundAndSave(payment.getOrder().getBooking());
+        if (passengers.isEmpty()) {
+            throw new DataNotFoundException("Пассажиры не найдены");
+        }
 
-        return PayRefundResponse.builder()
-                .paymentId(payment.getId())
-                .message(ApiMessage.PAYMENT_REFUND_SUCCESS.getMessage(payment.getPaidAmount()) + payment.getCurrency())
-                .paymentStatus(payment.getPaymentStatus())
+        // 4. Проверяем что все пассажиры принадлежат этой брони
+        boolean allMatch = passengers.stream()
+                .allMatch(p -> p.getBooking().getId().equals(booking.getId()));
+
+        if (!allMatch) {
+            throw new BadRequestException("Один или несколько пассажиров не принадлежат этой брони");
+        }
+
+        // 5. Определяем статус возврата
+        RefundStatus status = Boolean.TRUE.equals(request.getPretend())
+                ? RefundStatus.PENDING
+                : RefundStatus.COMPLETED;
+
+        // 6. Считаем возврат для каждого пассажира
+        List<Refund> refunds = new ArrayList<>();
+        List<RefundQuoteResponse.PassengerRefund> passengerRefunds = new ArrayList<>();
+
+        for (Passenger passenger : passengers) {
+
+            BigDecimal passengerPrice = order.getTotalAmount()
+                    .divide(BigDecimal.valueOf(order.getPassengerCount()), 2, RoundingMode.HALF_UP);
+
+            BigDecimal penaltyAmount;
+            BigDecimal refundAmount;
+
+            if (Boolean.TRUE.equals(request.getFullRefund())) {
+                penaltyAmount = BigDecimal.ZERO;
+                refundAmount = passengerPrice;
+            } else {
+                penaltyAmount = passengerPrice.multiply(BigDecimal.valueOf(0.2));
+                refundAmount = passengerPrice.subtract(penaltyAmount);
+            }
+
+            refunds.add(Refund.builder()
+                    .order(order)
+                    .passenger(passenger)
+                    .refundAmount(refundAmount)
+                    .penaltyAmount(penaltyAmount)
+                    .operationMode(request.getOperationMode() != null
+                            ? request.getOperationMode().name()
+                            : OperationMode.VOLUNTARY.name())
+                    .fullRefund(request.getFullRefund())
+                    .pretend(request.getPretend())
+                    .status(status)
+                    .build());
+
+            passengerRefunds.add(RefundQuoteResponse.PassengerRefund.builder()
+                    .passengerId(passenger.getId())
+                    .firstName(passenger.getFirstname())
+                    .lastName(passenger.getLastname())
+                    .refundAmount(refundAmount)
+                    .penaltyAmount(penaltyAmount)
+                    .build());
+        }
+
+        // 7. Если не pretend — реально сохраняем и меняем статусы
+        if (Boolean.FALSE.equals(request.getPretend())) {
+            refundRepo.saveAll(refunds); // saveAll вместо save в цикле
+            order.setStatus(OrderStatus.REFUNDED);
+            orderRepo.save(order);
+        }
+
+        // 8. Возвращаем ответ
+        return RefundQuoteResponse.builder()
+                .regnum(request.getRegnum())
+                .status(status.toString())
+                .operationMode(request.getOperationMode() != null
+                        ? request.getOperationMode().name()
+                        : OperationMode.VOLUNTARY.name())
+                .pretend(request.getPretend())
+                .totalRefundAmount(passengerRefunds.stream()
+                        .map(RefundQuoteResponse.PassengerRefund::getRefundAmount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add))
+                .passengers(passengerRefunds)
                 .build();
     }
 
