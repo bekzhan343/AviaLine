@@ -3,7 +3,6 @@ package com.example.avialine.mapper;
 import com.example.avialine.dto.*;
 import com.example.avialine.dto.response.*;
 import com.example.avialine.dto.PopularDirectDTO;
-import com.example.avialine.enums.PaxCode;
 import com.example.avialine.model.entity.*;
 import org.springframework.stereotype.Component;
 
@@ -240,13 +239,23 @@ public class DTOMapper {
                 .build();
     }
 
-    public GetPaymentsResponse.PaymentsResponse toPaymentsResponse(Payment payment) {
-        return GetPaymentsResponse.PaymentsResponse.builder()
+    public GetPaymentsByOrderIdResponse.PaymentResponse toPaymentsResponse(Payment payment) {
+        return GetPaymentsByOrderIdResponse.PaymentResponse.builder()
                 .paymentId(payment.getId())
                 .paymentStatus(payment.getPaymentStatus())
                 .amount(payment.getAmount())
                 .paidAmount(payment.getPaidAmount())
-                .status(payment.getPaymentStatus())
+                .paymentStatus(payment.getPaymentStatus())
                 .build();
     }
+
+    public GetAllPaymentsByOrders.PaymentDetailSummary toPaymentDetailSummary(Payment payment) {
+        return GetAllPaymentsByOrders.PaymentDetailSummary.builder()
+                .paymentId(payment.getId())
+                .paymentStatus(payment.getPaymentStatus())
+                .amount(payment.getAmount())
+                .paidAmount(payment.getPaidAmount())
+                .build();
+    }
+
 }

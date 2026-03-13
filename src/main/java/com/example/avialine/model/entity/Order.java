@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Builder
 @Getter
@@ -51,6 +52,8 @@ public class Order {
     @Column(name = "taxes", nullable = false, precision = 10, scale = 2)
     private BigDecimal taxes;
 
+    @OneToMany(mappedBy = "order")
+    private List<Payment> payments;
 
 
 

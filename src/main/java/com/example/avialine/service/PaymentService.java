@@ -16,5 +16,7 @@ public interface PaymentService {
 
     PayRefundResponse refund(Integer paymentId);
 
-    GetPaymentsResponse getPayments(Integer orderId);
+    GetPaymentsByOrderIdResponse getPaymentsByOrderId(Integer orderId);
+
+    GetAllPaymentsByOrders paymentsHistoryByOrder();
 }

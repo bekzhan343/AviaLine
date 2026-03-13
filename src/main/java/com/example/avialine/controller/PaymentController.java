@@ -68,12 +68,18 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("${end.point.payment-get-all}")
+    @GetMapping("${end.point.payment-order-history-by-orderid}")
     public ResponseEntity<?> getPayments(@PathVariable("orderId") Integer orderId) {
         try {
-            return ResponseEntity.status(200).body(paymentService.getPayments(orderId));
+            return ResponseEntity.status(200).body(paymentService.getPaymentsByOrderId(orderId));
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(404).body(new DetailErrorResponse(e.getMessage()));
         }
     }
+
+    @GetMapping("${end.point.payment-orders-history}")
+    public ResponseEntity<?> getPaymentsHistory() {
+        return ResponseEntity.status(200).body(paymentService.paymentsHistoryByOrder());
+    }
+
 }

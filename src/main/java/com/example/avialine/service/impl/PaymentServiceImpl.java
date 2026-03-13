@@ -4,16 +4,22 @@ import com.example.avialine.dto.response.*;
 import com.example.avialine.enums.*;
 import com.example.avialine.exception.DataNotFoundException;
 import com.example.avialine.mapper.DTOMapper;
+import com.example.avialine.model.entity.Booking;
 import com.example.avialine.model.entity.Order;
 import com.example.avialine.model.entity.Payment;
+import com.example.avialine.model.entity.User;
+import com.example.avialine.repo.OrderRepo;
 import com.example.avialine.repo.PaymentRepo;
-import com.example.avialine.repo.ReceiptRepo;
+import com.example.avialine.security.util.SecurityUtil;
 import com.example.avialine.service.*;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +33,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final MockGatewayService mockGatewayService;
     private final BookingService bookingService;
     private final DTOMapper dtoMapper;
+    private final UserService userService;
+    private final OrderRepo orderRepo;
 
     @Override
     public PaymentInitResponse initPayment(Integer orderId) {
@@ -180,21 +188,65 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional(readOnly = true)
     @Override
-    public GetPaymentsResponse getPayments(Integer orderId) {
+    public GetPaymentsByOrderIdResponse getPaymentsByOrderId(Integer orderId) {
+
+        Order order = orderService.getOrderById(orderId);
 
         Set<Payment> payments = paymentRepo.getPaymentsByOrderId(orderId);
 
         if (payments.isEmpty()){
             throw new DataNotFoundException(ApiErrorMessage.PAYMENTS_NOT_FOUND.getMessage());
         }
-        Set<GetPaymentsResponse.PaymentsResponse> response = payments
+        Set<GetPaymentsByOrderIdResponse.PaymentResponse> response = payments
                 .stream()
                 .map(dtoMapper::toPaymentsResponse)
                 .collect(Collectors.toSet());
 
-        return GetPaymentsResponse.builder()
+        return GetPaymentsByOrderIdResponse.builder()
                 .orderId(orderId)
+                .orderStatus(order.getStatus())
                 .payments(response)
+                .build();
+    }
+
+    @Override
+    public GetAllPaymentsByOrders paymentsHistoryByOrder() {
+
+        Authentication auth = SecurityUtil.requireAuthentication();
+
+        User user = userService.getUserByPhone(auth.getName());
+
+        List<Booking> bookings = bookingService.getByUser(user);
+
+        List<Order> orders = orderRepo.getOrderByBookingIn(bookings);
+
+        List<GetAllPaymentsByOrders.OrderPaymentSummary> orderResponse = orders.stream()
+                .map(
+
+
+                        order -> {
+
+                             List<GetAllPaymentsByOrders.PaymentDetailSummary> paymentDetailSummaries = order.getPayments().stream()
+                                    .map(dtoMapper::toPaymentDetailSummary)
+                                    .toList();
+
+                             return GetAllPaymentsByOrders.OrderPaymentSummary
+                                    .builder()
+                                    .orderId(order.getId())
+                                    .regnum(order.getRegnum())
+                                    .orderStatus(order.getStatus())
+                                    .totalAmount(order.getTotalAmount())
+                                    .taxes(order.getTaxes())
+                                    .passengersCount(order.getPassengerCount())
+                                    .payments(paymentDetailSummaries)
+                                    .build();
+                        }
+                )
+                .toList();
+
+        return GetAllPaymentsByOrders.builder()
+                .userId(user.getId())
+                .orders(orderResponse)
                 .build();
     }
 

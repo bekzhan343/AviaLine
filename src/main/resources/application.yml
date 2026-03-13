@@ -42,7 +42,7 @@ spring:
       com.AviaLine: debug
 
 server:
-  port: 8173
+  port: 8174
 
 end:
   point:
@@ -54,7 +54,8 @@ end:
     payment-retry: /retry/{paymentId}
     payment-cancel: /cancel/{paymentId}
     payment-refund: /refund/{paymentId}
-    payment-get-all: /history/{orderId}
+    payment-order-history-by-orderid: /order-history/{orderId}
+    payment-orders-history: /order-history/
 
     avia-base: /avia
     avia-search-params: /search-params/

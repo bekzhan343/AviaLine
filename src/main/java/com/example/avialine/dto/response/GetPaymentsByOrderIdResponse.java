@@ -1,5 +1,6 @@
 package com.example.avialine.dto.response;
 
+import com.example.avialine.enums.OrderStatus;
 import com.example.avialine.enums.PaymentStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -13,19 +14,22 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GetPaymentsResponse implements Serializable {
+public class GetPaymentsByOrderIdResponse implements Serializable {
 
     @JsonProperty("order_id")
     private Integer orderId;
 
-    private Set<PaymentsResponse> payments;
+    @JsonProperty("order_status")
+    private OrderStatus orderStatus;
+
+    private Set<PaymentResponse> payments;
 
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class PaymentsResponse implements Serializable {
+    public static class PaymentResponse implements Serializable {
 
         @JsonProperty("payment_id")
         private Integer paymentId;
@@ -37,8 +41,6 @@ public class GetPaymentsResponse implements Serializable {
 
         @JsonProperty("paid_amount")
         private BigDecimal paidAmount;
-
-        private PaymentStatus status;
 
 
     }
